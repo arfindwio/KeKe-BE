@@ -66,54 +66,41 @@ model Category {
 }
 
 model Product {
-  id           Int           @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   productImage String
   productName  String
   price        Int
   description  String
   stock        Int
-  viewCount    Int           @default(0)
-  soldCount    Int           @default(0)
+  viewCount    Int      @default(0)
+  soldCount    Int      @default(0)
   createdAt    String
   updatedAt    String
   categoryId   Int
-  category     Category      @relation(fields: [categoryId], references: [id])
+  category     Category @relation(fields: [categoryId], references: [id])
   size         Size[]
   color        Color[]
-  Cart         Cart[]
-  Transaction  Transaction[]
+  cart         Cart[]
 }
 
 model Size {
-  id          Int           @id @default(autoincrement())
-  sizeName    String
-  createdAt   String
-  updatedAt   String
-  productId   Int
-  product     Product       @relation(fields: [productId], references: [id])
-  transaction Transaction[]
-}
-
-model Color {
-  id          Int           @id @default(autoincrement())
-  colorName   String
-  createdAt   String
-  updatedAt   String
-  productId   Int
-  product     Product       @relation(fields: [productId], references: [id])
-  transaction Transaction[]
-}
-
-model Cart {
   id        Int     @id @default(autoincrement())
-  quantity  Int
-  note      String
+  sizeName  String
   createdAt String
   updatedAt String
   productId Int
   product   Product @relation(fields: [productId], references: [id])
-  userId    Int
-  user      User    @relation(fields: [userId], references: [id])
+  cart      Cart[]
+}
+
+model Color {
+  id        Int     @id @default(autoincrement())
+  colorName String
+  createdAt String
+  updatedAt String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  cart      Cart[]
 }
 
 model Discussion {
@@ -125,36 +112,38 @@ model Discussion {
   user        User   @relation(fields: [userId], references: [id])
 }
 
-model Transaction {
-  id        Int     @id @default(autoincrement())
-  quantity  Int
-  note      String
+model Cart {
+  id        Int      @id @default(autoincrement())
+  quantity  Int      @default(1)
+  note      String?
   createdAt String
   updatedAt String
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   sizeId    Int?
-  size      Size?   @relation(fields: [sizeId], references: [id])
+  size      Size?    @relation(fields: [sizeId], references: [id])
   colorId   Int?
-  color     Color?  @relation(fields: [colorId], references: [id])
-  paymentId Int
-  payment   Payment @relation(fields: [paymentId], references: [id])
+  color     Color?   @relation(fields: [colorId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  paymentId Int?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
 }
 
 model Payment {
-  id             Int           @id @default(autoincrement())
+  id             Int     @id @default(autoincrement())
   amount         Int
-  paymentStatus  String        @default("Unpaid")
-  deliveryStatus String        @default("Not Shipped")
+  paymentStatus  String  @default("Unpaid")
+  deliveryStatus String  @default("Not Shipped")
   trackingNumber String?
   methodPayment  String
   paymentCode    String
   createdAt      String
   updatedAt      String
   userId         Int
-  user           User          @relation(fields: [userId], references: [id])
+  user           User    @relation(fields: [userId], references: [id])
   review         Review?
-  transaction    Transaction[]
+  cart           Cart[]
 }
 
 model Review {
