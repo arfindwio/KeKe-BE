@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["orderByRelation"]
+  binaryTargets   = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int            @id @default(autoincrement())
+  email              String         @unique
+  password           String?
+  otp                String?
+  otpCreatedAt       DateTime?
+  isVerified         Boolean        @default(false)
+  role               String         @default("User")
+  resetPasswordToken String?
+  googleId           String?
+  createdAt          String
+  updatedAt          String
+  userProfile        UserProfile?
+  notification       Notification[]
+  cart               Cart[]
+  Discussion         Discussion[]
+  Payment            Payment[]
+}
+
+model UserProfile {
+  id             Int     @id @default(autoincrement())
+  profilePicture String?
+  fullName       String
+  address        String?
+  phoneNumber    String? @unique
+  city           String?
+  country        String?
+  createdAt      String
+  updatedAt      String
+  userId         Int     @unique
+  user           User    @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        Int     @id @default(autoincrement())
+  title     String
+  message   String
+  isRead    Boolean @default(false)
+  createdAt String
+  updatedAt String
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id            Int       @id @default(autoincrement())
+  categoryImage String
+  categoryName  String
+  createdAt     String
+  updatedAt     String
+  product       Product[]
+}
+
+model Product {
+  id           Int           @id @default(autoincrement())
+  productImage String
+  productName  String
+  price        Int
+  description  String
+  stock        Int
+  viewCount    Int           @default(0)
+  soldCount    Int           @default(0)
+  createdAt    String
+  updatedAt    String
+  categoryId   Int
+  category     Category      @relation(fields: [categoryId], references: [id])
+  size         Size[]
+  color        Color[]
+  Cart         Cart[]
+  Transaction  Transaction[]
+}
+
+model Size {
+  id          Int           @id @default(autoincrement())
+  sizeName    String
+  createdAt   String
+  updatedAt   String
+  productId   Int
+  product     Product       @relation(fields: [productId], references: [id])
+  transaction Transaction[]
+}
+
+model Color {
+  id          Int           @id @default(autoincrement())
+  colorName   String
+  createdAt   String
+  updatedAt   String
+  productId   Int
+  product     Product       @relation(fields: [productId], references: [id])
+  transaction Transaction[]
+}
+
+model Cart {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  note      String
+  createdAt String
+  updatedAt String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model Discussion {
+  id          Int    @id @default(autoincrement())
+  userMessage String
+  createdAt   String
+  updatedAt   String
+  userId      Int
+  user        User   @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  note      String
+  createdAt String
+  updatedAt String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  sizeId    Int?
+  size      Size?   @relation(fields: [sizeId], references: [id])
+  colorId   Int?
+  color     Color?  @relation(fields: [colorId], references: [id])
+  paymentId Int
+  payment   Payment @relation(fields: [paymentId], references: [id])
+}
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  amount         Int
+  paymentStatus  String        @default("Unpaid")
+  deliveryStatus String        @default("Not Shipped")
+  trackingNumber String?
+  methodPayment  String
+  paymentCode    String
+  createdAt      String
+  updatedAt      String
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id])
+  review         Review?
+  transaction    Transaction[]
+}
+
+model Review {
+  id          Int     @id @default(autoincrement())
+  userRating  Int
+  userComment String
+  createdAt   String
+  updatedAt   String
+  paymentId   Int     @unique
+  payment     Payment @relation(fields: [paymentId], references: [id])
+}
