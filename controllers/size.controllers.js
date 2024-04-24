@@ -65,7 +65,6 @@ module.exports = {
   getSizesByProductId: catchAsync(async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const { search, page = 1, limit = 10 } = req.query;
 
       const sizes = await prisma.size.findMany({
         where: { productId: Number(productId) },

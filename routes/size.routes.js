@@ -5,7 +5,7 @@ const { getAllSizes, createSize, getSizesByProductId, editSizeById, deleteSize }
 
 router.get("/", Auth, checkRole(["Admin"]), getAllSizes);
 router.post("/", Auth, checkRole(["Admin"]), createSize);
-router.get("/:productId", Auth, getSizesByProductId);
+router.get("/:productId", getSizesByProductId);
 router.put("/:sizeId", Auth, checkRole(["Admin"]), editSizeById);
 router.delete("/:sizeId", Auth, checkRole(["Admin"]), deleteSize);
 
