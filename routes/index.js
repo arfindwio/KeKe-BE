@@ -7,6 +7,7 @@ const UserProfile = require("./userProfile.routes");
 const Notification = require("./notification.routes");
 const Category = require("./category.routes");
 const Product = require("./product.routes");
+const Size = require("./size.routes");
 
 // API Docs
 router.use("/api-docs", swaggerUi.serve);
@@ -18,5 +19,6 @@ router.use("/api/v1/user-profiles", UserProfile);
 router.use("/api/v1/notifications", Notification);
 router.use("/api/v1/categories", Category);
 router.use("/api/v1/products", Product);
+router.use("/api/v1/sizes", Size);
 
 module.exports = router;
