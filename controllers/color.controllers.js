@@ -118,7 +118,7 @@ module.exports = {
     }
   }),
 
-  deleteColor: catchAsync(async (req, res, next) => {
+  deleteColorById: catchAsync(async (req, res, next) => {
     try {
       const { colorId } = req.params;
 

@@ -118,7 +118,7 @@ module.exports = {
     }
   }),
 
-  deleteSize: catchAsync(async (req, res, next) => {
+  deleteSizeById: catchAsync(async (req, res, next) => {
     try {
       const { sizeId } = req.params;
 
