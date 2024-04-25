@@ -42,6 +42,7 @@ module.exports = {
           productId: Number(productId),
           sizeId: Number(sizeId),
           colorId: Number(colorId),
+          paymentId: null,
         },
       });
 
