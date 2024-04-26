@@ -42,6 +42,10 @@
     {
       "name": "Carts",
       "description": "Operations about Cart"
+    },
+    {
+      "name": "Payments",
+      "description": "Operations about Payment"
     }
   ],
   "paths": {
@@ -4714,6 +4718,317 @@
           }
         }
       }
+    },
+    "/payments": {
+      "get": {
+        "tags": ["Payments"],
+        "operationId": "get-all-payments",
+        "summary": "Get all payments",
+        "description": "Get all payments",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Used to specify a particular search when retrieving payments data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Used to specify a particular page when retrieving payments data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Determines the limit of the number of payments to be returned in a single request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "pagination": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/Pagination"
+                                }
+                              ]
+                            },
+                            "payments": {
+                              "type": "array",
+                              "items": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/PaymentModel"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Payments"],
+        "operationId": "create-payment",
+        "summary": "Create payment",
+        "description": "Create payment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreatePayment"
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "newPayment": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/PaymentModel"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/{paymentId}": {
+      "put": {
+        "tags": ["Payments"],
+        "operationId": "edit-payment-by-id",
+        "summary": "Edit payment by Id",
+        "description": "Edit payment by Id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The ID of the payment to retrieve."
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/EditPayment"
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "newPayment": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/PaymentModel"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/history": {
+      "get": {
+        "tags": ["Payments"],
+        "operationId": "get-all-payments",
+        "summary": "Get all payments",
+        "description": "Get all payments",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Used to specify a particular search when retrieving payments data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Used to specify a particular page when retrieving payments data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Determines the limit of the number of payments to be returned in a single request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "pagination": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/Pagination"
+                                }
+                              ]
+                            },
+                            "payments": {
+                              "type": "array",
+                              "items": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/PaymentModel"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5054,6 +5369,52 @@
             "example": 1
           },
           "paymentId": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "PaymentModel": {
+        "title": "Cart",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "amount": {
+            "type": "integer",
+            "example": 1000000
+          },
+          "paymentStatus": {
+            "type": "string",
+            "example": "Paid"
+          },
+          "deliveryStatus": {
+            "type": "string",
+            "example": "Not Shipped"
+          },
+          "trackingNumber": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "methodPayment": {
+            "type": "string",
+            "example": "Credit Card"
+          },
+          "paymentCode": {
+            "type": "string",
+            "example": "12AcddSDS3443CScd"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "userId": {
             "type": "integer",
             "example": 1
           }
@@ -5472,6 +5833,52 @@
                 "note": {
                   "type": "string",
                   "example": "Please handle with care. Thank you!"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreatePayment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "example": 1000000
+                },
+                "methodPayment": {
+                  "type": "string",
+                  "example": "Credit Card"
+                },
+                "cardNumber": {
+                  "type": "string",
+                  "example": "4811 1111 1111 1114"
+                },
+                "cvv": {
+                  "type": "string",
+                  "example": "123"
+                },
+                "expiryDate": {
+                  "type": "string",
+                  "example": "01/25"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EditPayment": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "trackingNumber": {
+                  "type": "string",
+                  "example": "0123456789"
                 }
               }
             }

@@ -18,7 +18,7 @@ app.get("/", (req, res, next) => {
   try {
     res.json({
       success: true,
-      message: "Hello Welcome To Travelesia Back-End",
+      message: "Hello Welcome To Apparel Back-End",
     });
   } catch (err) {
     next(err);

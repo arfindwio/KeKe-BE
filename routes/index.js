@@ -10,6 +10,7 @@ const Product = require("./product.routes");
 const Size = require("./size.routes");
 const Color = require("./color.routes");
 const Cart = require("./cart.routes");
+const Payment = require("./payment.routes");
 
 // API Docs
 router.use("/api-docs", swaggerUi.serve);
@@ -24,5 +25,6 @@ router.use("/api/v1/products", Product);
 router.use("/api/v1/sizes", Size);
 router.use("/api/v1/colors", Color);
 router.use("/api/v1/carts", Cart);
+router.use("/api/v1/payments", Payment);
 
 module.exports = router;
