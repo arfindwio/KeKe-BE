@@ -46,6 +46,10 @@
     {
       "name": "Payments",
       "description": "Operations about Payment"
+    },
+    {
+      "name": "Reviews",
+      "description": "Operations about Review"
     }
   ],
   "paths": {
@@ -5029,6 +5033,186 @@
           }
         }
       }
+    },
+    "/reviews/{productId}": {
+      "post": {
+        "tags": ["Reviews"],
+        "operationId": "create-review-by-product-id",
+        "summary": "create review by product Id",
+        "description": "create review by product Id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The ID of the product to retrieve."
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreateReview"
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "newReview": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/ReviewModel"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5375,7 +5559,7 @@
         }
       },
       "PaymentModel": {
-        "title": "Cart",
+        "title": "Payment",
         "type": "object",
         "properties": {
           "id": {
@@ -5415,6 +5599,40 @@
             "example": "15 Februari 2024"
           },
           "userId": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "ReviewModel": {
+        "title": "Review",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "userRating": {
+            "type": "integer",
+            "example": 5
+          },
+          "userComment": {
+            "type": "string",
+            "example": "Great product! Fast shipping"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "userId": {
+            "type": "integer",
+            "example": 1
+          },
+          "productId": {
             "type": "integer",
             "example": 1
           }
@@ -5845,10 +6063,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "amount": {
-                  "type": "integer",
-                  "example": 1000000
-                },
                 "methodPayment": {
                   "type": "string",
                   "example": "Credit Card"
@@ -5879,6 +6093,25 @@
                 "trackingNumber": {
                   "type": "string",
                   "example": "0123456789"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateReview": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userRating": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "userComment": {
+                  "type": "string",
+                  "example": "Great product! Fast shipping"
                 }
               }
             }

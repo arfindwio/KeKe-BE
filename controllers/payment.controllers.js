@@ -137,8 +137,6 @@ module.exports = {
         },
       });
 
-      console.log(carts);
-
       let totalPrice = 0;
 
       for (const cart of carts) {
@@ -261,10 +259,8 @@ module.exports = {
         parameter.payment_type = "akulaku";
       }
 
-      //   Charge the transaction using Midtrans API
       let transaction = await core.charge(parameter);
 
-      //   Send email notification to the user
       const html = await nodemailer.getHtml("transaction-success.ejs", {
         methodPayment,
       });
