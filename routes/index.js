@@ -12,6 +12,7 @@ const Color = require("./color.routes");
 const Cart = require("./cart.routes");
 const Payment = require("./payment.routes");
 const Review = require("./review.routes");
+const Discussion = require("./discussion.routes");
 
 // API Docs
 router.use("/api-docs", swaggerUi.serve);
@@ -28,5 +29,6 @@ router.use("/api/v1/colors", Color);
 router.use("/api/v1/carts", Cart);
 router.use("/api/v1/payments", Payment);
 router.use("/api/v1/reviews", Review);
+router.use("/api/v1/discussions", Discussion);
 
 module.exports = router;
