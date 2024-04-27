@@ -30,6 +30,7 @@ model User {
   discussion         Discussion[]
   payment            Payment[]
   review             Review[]
+  Reply              Reply[]
 }
 
 model UserProfile {
@@ -67,21 +68,22 @@ model Category {
 }
 
 model Product {
-  id           Int      @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
   productImage String
   productName  String
   price        Int
   description  String
   stock        Int
-  viewCount    Int      @default(0)
-  soldCount    Int      @default(0)
+  viewCount    Int          @default(0)
+  soldCount    Int          @default(0)
   createdAt    String
   updatedAt    String
   categoryId   Int
-  category     Category @relation(fields: [categoryId], references: [id])
+  category     Category     @relation(fields: [categoryId], references: [id])
   size         Size[]
   color        Color[]
   cart         Cart[]
+  discussion   Discussion[]
   review       Review[]
 }
 
@@ -106,12 +108,26 @@ model Color {
 }
 
 model Discussion {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   userMessage String
   createdAt   String
   updatedAt   String
   userId      Int
-  user        User   @relation(fields: [userId], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
+  productId   Int
+  product     Product @relation(fields: [productId], references: [id])
+  reply       Reply[]
+}
+
+model Reply {
+  id           Int        @id @default(autoincrement())
+  userMessage  String
+  createdAt    String
+  updatedAt    String
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  discussionId Int
+  discussion   Discussion @relation(fields: [discussionId], references: [id])
 }
 
 model Cart {
@@ -153,8 +169,8 @@ model Review {
   userComment String
   createdAt   String
   updatedAt   String
-  userId      Int     @unique
+  userId      Int
   user        User    @relation(fields: [userId], references: [id])
-  productId   Int     @unique
+  productId   Int
   product     Product @relation(fields: [productId], references: [id])
 }
