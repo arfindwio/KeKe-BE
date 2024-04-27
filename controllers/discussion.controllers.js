@@ -48,12 +48,11 @@ module.exports = {
 
       if (!discussion) throw new CustomError(404, "discussion Not Found");
 
-      if (discussion.userId !== userId) throw new CustomError(403, "This is not your discussion chat");
+      if (req.user.role !== "Admin" && discussion.userId !== userId) throw new CustomError(403, "This is not your discussion chat");
 
       const deletedDiscussion = await prisma.discussion.delete({
         where: {
           id: Number(discussion.id),
-          userId: Number(userId),
         },
       });
 

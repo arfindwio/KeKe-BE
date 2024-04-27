@@ -121,7 +121,7 @@ model Discussion {
 
 model Reply {
   id           Int        @id @default(autoincrement())
-  userMessage  String
+  replyMessage String
   createdAt    String
   updatedAt    String
   userId       Int
