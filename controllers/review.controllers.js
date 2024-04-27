@@ -25,12 +25,12 @@ module.exports = {
 
       const reviewsUser = await prisma.review.findMany({
         where: {
-          id: Number(req.user.id),
+          userId: Number(req.user.id),
           productId: Number(product.id),
         },
       });
 
-      if (paymentsUser.length === reviewsUser.length) throw new CustomError(403, "You cannot review");
+      if (paymentsUser.length <= reviewsUser.length) throw new CustomError(403, "You cannot review");
 
       const newReview = await prisma.review.create({
         data: {
