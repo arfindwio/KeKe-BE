@@ -9,6 +9,8 @@ module.exports = {
       const { productId } = req.params;
       const { userRating, userComment } = req.body;
 
+      if (!userRating || !userComment) throw new CustomError(400, "Please provide userRating and userComment");
+
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },
       });

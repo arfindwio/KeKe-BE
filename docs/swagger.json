@@ -28,6 +28,10 @@
       "description": "Operations about Category"
     },
     {
+      "name": "Promotions",
+      "description": "Operations about Promotion"
+    },
+    {
       "name": "Products",
       "description": "Operations about Product"
     },
@@ -2613,6 +2617,382 @@
                           "properties": {
                             "deletedCategory": {
                               "$ref": "#/components/schemas/CategoryModel"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promotions": {
+      "get": {
+        "tags": ["Promotions"],
+        "operationId": "get-all-promotions",
+        "summary": "Get all promotions",
+        "description": "Get all promotions",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Used to specify a particular search when retrieving promotions data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Used to specify a particular page when retrieving promotions data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Determines the limit of the number of promotions to be returned in a single request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "pagination": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/Pagination"
+                                }
+                              ]
+                            },
+                            "promotions": {
+                              "type": "array",
+                              "items": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/PromotionModel"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Promotions"],
+        "operationId": "create-promotion",
+        "summary": "Create promotion",
+        "description": "Create promotion",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreatePromotion"
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "newPromotion": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/PromotionModel"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promotions/{promotionId}": {
+      "put": {
+        "tags": ["Promotions"],
+        "operationId": "edit-promotion-by-id",
+        "summary": "Edit promotion by id",
+        "description": "Edit promotion by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "promotionId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The ID of the promotion to retrieve."
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/CreatePromotion"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "editedPromotion": {
+                              "$ref": "#/components/schemas/PromotionModel"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Promotions"],
+        "operationId": "delete-promotion-by-id",
+        "summary": "Delete promotion by id",
+        "description": "Delete promotion by id",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "promotionId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "The ID of the promotion to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "deletedPromotion": {
+                              "$ref": "#/components/schemas/PromotionModel"
                             }
                           }
                         }
@@ -6132,6 +6512,37 @@
           }
         }
       },
+      "PromotionModel": {
+        "title": "Promotion",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "discount": {
+            "type": "number",
+            "format": "float",
+            "example": 0.1
+          },
+          "startDate": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "15 Februari 2024"
+          }
+        }
+      },
       "ProductModel": {
         "title": "Product",
         "type": "object",
@@ -6177,6 +6588,10 @@
             "example": "15 Februari 2024"
           },
           "categoryId": {
+            "type": "integer",
+            "example": 1
+          },
+          "promotionId": {
             "type": "integer",
             "example": 1
           }
@@ -6651,6 +7066,54 @@
           }
         }
       },
+      "CreatePromotion": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "discount": {
+                  "type": "number",
+                  "format": "float",
+                  "example": 0.1
+                },
+                "startDate": {
+                  "type": "string",
+                  "example": "2024-02-01"
+                },
+                "endDate": {
+                  "type": "string",
+                  "example": "2024-02-01"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EditPromotion": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "discount": {
+                  "type": "number",
+                  "format": "float",
+                  "example": 0.1
+                },
+                "startDate": {
+                  "type": "string",
+                  "example": "2024-02-01"
+                },
+                "endDate": {
+                  "type": "string",
+                  "example": "2024-02-01"
+                }
+              }
+            }
+          }
+        }
+      },
       "CreateProduct": {
         "content": {
           "multipart/form-data": {
@@ -6678,6 +7141,10 @@
                   "example": 100
                 },
                 "categoryId": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "promotionId": {
                   "type": "integer",
                   "example": 1
                 }
@@ -6713,6 +7180,10 @@
                   "example": 100
                 },
                 "categoryId": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "promotionId": {
                   "type": "integer",
                   "example": 1
                 }

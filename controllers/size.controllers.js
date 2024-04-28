@@ -66,8 +66,14 @@ module.exports = {
     try {
       const { productId } = req.params;
 
+      const product = await prisma.product.findUnique({
+        where: { id: Number(productId) },
+      });
+
+      if (!product) throw new CustomError(404, "product Not Found");
+
       const sizes = await prisma.size.findMany({
-        where: { productId: Number(productId) },
+        where: { productId: Number(product.id) },
       });
 
       res.status(200).json({
