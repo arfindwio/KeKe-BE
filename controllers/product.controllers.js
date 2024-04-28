@@ -36,17 +36,30 @@ module.exports = {
 
   createProduct: catchAsync(async (req, res, next) => {
     try {
-      const { productName, price, description, stock, categoryId } = req.body;
+      const { productName, price, description, stock, categoryId, promotionId } = req.body;
       const file = req.file;
       let imageURL;
+      let finalPrice = price;
 
       if (!productName || !file || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, categoryId and productImage");
+
+      if (promotionId === "null") throw new CustomError(400, "promotionId cannot be null");
 
       const category = await prisma.category.findUnique({
         where: { id: Number(categoryId) },
       });
 
       if (!category) throw new CustomError(404, "category Not Found");
+
+      if (promotionId) {
+        const promotion = await prisma.promotion.findUnique({
+          where: { id: Number(promotionId) },
+        });
+
+        if (!promotion) throw new CustomError(404, "Promotion not found");
+
+        finalPrice = price - promotion.discount * price;
+      }
 
       if (file) {
         const strFile = file.buffer.toString("base64");
@@ -63,10 +76,11 @@ module.exports = {
         data: {
           productImage: imageURL,
           productName,
-          price: Number(price),
+          price: Number(finalPrice),
           description,
           stock: Number(stock),
-          categoryId: category.id,
+          categoryId: Number(category.id),
+          promotionId: promotionId ? Number(promotionId) : null,
           createdAt: formattedDate(new Date()),
           updatedAt: formattedDate(new Date()),
         },
@@ -85,11 +99,14 @@ module.exports = {
   editProductById: catchAsync(async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const { productName, price, description, stock, categoryId } = req.body;
+      const { productName, price, description, stock, categoryId, promotionId } = req.body;
       const file = req.file;
       let imageURL;
+      let finalPrice = price;
 
       if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, categoryId and productImage");
+
+      if (promotionId === "null") throw new CustomError(400, "promotionId cannot be null");
 
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },
@@ -100,6 +117,16 @@ module.exports = {
       });
 
       if (!category || !product) throw new CustomError(404, "category or product Not Found");
+
+      if (promotionId) {
+        const promotion = await prisma.promotion.findUnique({
+          where: { id: Number(promotionId) },
+        });
+
+        if (!promotion) throw new CustomError(404, "Promotion not found");
+
+        finalPrice = price - promotion.discount * price;
+      }
 
       if (file) {
         const strFile = file.buffer.toString("base64");
@@ -119,10 +146,11 @@ module.exports = {
         data: {
           productImage: imageURL,
           productName,
-          price: Number(price),
+          price: Number(finalPrice),
           description,
           stock: Number(stock),
-          categoryId: Number(product.id),
+          categoryId: Number(category.id),
+          promotionId: promotionId ? Number(promotionId) : null,
           updatedAt: formattedDate(new Date()),
         },
       });

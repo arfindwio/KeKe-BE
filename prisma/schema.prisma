@@ -67,6 +67,16 @@ model Category {
   product       Product[]
 }
 
+model Promotion {
+  id        Int       @id @default(autoincrement())
+  discount  Decimal
+  startDate String
+  endDate   String
+  createdAt String
+  updatedAt String
+  product   Product[]
+}
+
 model Product {
   id           Int          @id @default(autoincrement())
   productImage String
@@ -80,6 +90,8 @@ model Product {
   updatedAt    String
   categoryId   Int
   category     Category     @relation(fields: [categoryId], references: [id])
+  promotionId  Int?
+  promotion    Promotion?   @relation(fields: [promotionId], references: [id])
   size         Size[]
   color        Color[]
   cart         Cart[]
