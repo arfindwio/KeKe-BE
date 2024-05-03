@@ -15,7 +15,7 @@ module.exports = {
         where: search ? { discount: { contains: search, mode: "insensitive" } } : {},
       });
 
-      const totalPromotions = await prisma.airport.count({
+      const totalPromotions = await prisma.promotion.count({
         where: search ? { discount: { contains: search, mode: "insensitive" } } : {},
       });
 
