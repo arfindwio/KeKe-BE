@@ -283,6 +283,20 @@ module.exports = {
         },
       });
 
+      await Promise.all(
+        carts.map(async (cart) => {
+          const { productId, quantity } = cart;
+          await prisma.product.update({
+            where: { id: Number(productId) },
+            data: {
+              soldCount: {
+                increment: Number(quantity),
+              },
+            },
+          });
+        })
+      );
+
       res.status(201).json({
         status: true,
         message: "Payment initiated successfully",
@@ -296,7 +310,7 @@ module.exports = {
     }
   }),
 
-  editPayment: catchAsync(async (req, res, next) => {
+  editPaymentById: catchAsync(async (req, res, next) => {
     try {
       const { paymentId } = req.params;
       const { trackingNumber } = req.body;

@@ -26,16 +26,11 @@ module.exports = {
 
   createNotification: catchAsync(async (req, res, next) => {
     try {
-      const { title, message, createdAt } = req.body;
+      const { title, message } = req.body;
 
       // Validate the presence of required fields
       if (!title || !message) {
         throw new CustomError(400, "Title and message are required fields");
-      }
-
-      // Validate the absence of createdAt during notification creation
-      if (createdAt !== undefined) {
-        throw new CustomError(400, "createdAt cannot be provided during notification creation");
       }
 
       // Retrieve all users from the database
