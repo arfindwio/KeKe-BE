@@ -2,8 +2,69 @@ const prisma = require("../libs/prismaClient");
 const catchAsync = require("../utils/catchAsync");
 const { CustomError } = require("../utils/errorHandler");
 const { formattedDate } = require("../utils/formattedDate");
+const { getPagination } = require("../utils/getPagination");
 
 module.exports = {
+  getDiscussionsByProductId: catchAsync(async (req, res, next) => {
+    try {
+      const { productId } = req.params;
+      const { page = 1, limit = 10 } = req.query;
+
+      const product = await prisma.product.findUnique({
+        where: { id: Number(productId) },
+      });
+
+      if (!product) throw new CustomError(404, "product Not Found");
+
+      const discussions = await prisma.discussion.findMany({
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+        where: { productId: Number(product.id) },
+        include: {
+          user: {
+            select: {
+              userProfile: {
+                select: {
+                  fullName: true,
+                  profilePicture: true,
+                },
+              },
+            },
+          },
+          reply: {
+            select: {
+              replyMessage: true,
+              user: {
+                select: {
+                  userProfile: {
+                    select: {
+                      fullName: true,
+                      profilePicture: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const totalDiscussions = await prisma.discussion.count({
+        where: { productId: Number(product.id) },
+      });
+
+      const pagination = getPagination(req, totalDiscussions, Number(page), Number(limit));
+
+      res.status(200).json({
+        status: true,
+        message: "Discussions retrieved successfully",
+        data: { pagination, discussions },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
   createDiscussion: catchAsync(async (req, res, next) => {
     try {
       const { productId } = req.params;

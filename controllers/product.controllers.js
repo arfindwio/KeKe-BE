@@ -96,6 +96,50 @@ module.exports = {
     }
   }),
 
+  getProductById: catchAsync(async (req, res, next) => {
+    try {
+      const { productId } = req.params;
+
+      const product = await prisma.product.update({
+        where: {
+          id: Number(productId),
+        },
+        data: {
+          viewCount: { increment: 1 },
+        },
+        include: {
+          category: {
+            select: {
+              categoryName: true,
+            },
+          },
+          color: {
+            select: {
+              id: true,
+              colorName: true,
+            },
+          },
+          size: {
+            select: {
+              id: true,
+              sizeName: true,
+            },
+          },
+        },
+      });
+
+      if (!product) throw new CustomError(404, "product Not Found");
+
+      res.status(200).json({
+        status: true,
+        message: "get product by id successful",
+        data: { product },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
   editProductById: catchAsync(async (req, res, next) => {
     try {
       const { productId } = req.params;
