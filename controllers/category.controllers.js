@@ -17,6 +17,13 @@ module.exports = {
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
         where: search ? { categoryName: { contains: search, mode: "insensitive" } } : {},
+        include: {
+          product: {
+            select: {
+              soldCount: true,
+            },
+          },
+        },
       });
 
       const totalCategories = await prisma.category.count({
@@ -24,6 +31,13 @@ module.exports = {
       });
 
       const pagination = getPagination(req, totalCategories, Number(page), Number(limit));
+
+      categories.sort((a, b) => {
+        const totalSoldCountA = a.product.reduce((acc, curr) => acc + curr.soldCount, 0);
+        const totalSoldCountB = b.product.reduce((acc, curr) => acc + curr.soldCount, 0);
+
+        return totalSoldCountB - totalSoldCountA;
+      });
 
       res.status(200).json({
         status: true,

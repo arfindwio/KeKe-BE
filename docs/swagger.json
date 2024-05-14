@@ -3543,6 +3543,118 @@
         }
       }
     },
+    "/products/featured/recommendation": {
+      "get": {
+        "tags": ["Products"],
+        "operationId": "get-all-products-recommendation",
+        "summary": "Get all products recommendation",
+        "description": "Get all products recommendation",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Used to specify a particular search when retrieving products data",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "pagination": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/Pagination"
+                                }
+                              ]
+                            },
+                            "products": {
+                              "type": "array",
+                              "items": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/ProductModel"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/featured/specialOffer": {
+      "get": {
+        "tags": ["Products"],
+        "operationId": "get-product-special-offer",
+        "summary": "Get all products special offer",
+        "description": "Get all products special offer",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "pagination": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/Pagination"
+                                }
+                              ]
+                            },
+                            "product": {
+                              "type": "array",
+                              "items": {
+                                "allOf": [
+                                  {
+                                    "$ref": "#/components/schemas/ProductModel"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sizes": {
       "get": {
         "tags": ["Sizes"],
