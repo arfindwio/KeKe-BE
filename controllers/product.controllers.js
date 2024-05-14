@@ -16,6 +16,18 @@ module.exports = {
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
         where: search ? { productName: { contains: search, mode: "insensitive" } } : {},
+        include: {
+          category: {
+            select: {
+              categoryName: true,
+            },
+          },
+          review: {
+            select: {
+              userRating: true,
+            },
+          },
+        },
       });
 
       const totalProducts = await prisma.product.count({
@@ -229,6 +241,93 @@ module.exports = {
         status: true,
         message: "delete product successful",
         data: { deletedProduct },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
+  getProductsRecommendation: catchAsync(async (req, res, next) => {
+    try {
+      let { search } = req.query;
+
+      search = search ? search.trim() : "";
+
+      let products;
+
+      products = await prisma.product.findMany({
+        where: search
+          ? {
+              productName: { contains: search, mode: "insensitive" },
+            }
+          : {},
+        orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
+        include: {
+          category: { select: { categoryName: true } },
+          review: { select: { userRating: true } },
+        },
+      });
+      products.sort((a, b) => b.averageRating - a.averageRating);
+
+      const remainingProducts = await prisma.product.findMany({
+        where: {
+          NOT: {
+            id: {
+              in: products.map((product) => product.id),
+            },
+          },
+        },
+        orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
+        include: {
+          category: { select: { categoryName: true } },
+          review: { select: { userRating: true } },
+        },
+      });
+      products = products.concat(remainingProducts);
+
+      res.status(200).json({
+        status: true,
+        message: "show all products recommendation successful",
+        data: { products },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
+  getSpecialOfferProduct: catchAsync(async (req, res, next) => {
+    try {
+      const product = await prisma.product.findFirst({
+        where: {
+          promotionId: { not: null },
+        },
+        select: {
+          productImage: true,
+          productName: true,
+          description: true,
+          price: true,
+          soldCount: true,
+          stock: true,
+          review: {
+            select: {
+              userRating: true,
+            },
+          },
+          promotion: {
+            select: {
+              discount: true,
+              endDate: true,
+            },
+          },
+        },
+      });
+
+      if (!product) throw new CustomError(404, "No special offer product found");
+
+      res.status(200).json({
+        status: true,
+        message: "Show special offer product successful",
+        data: { product },
       });
     } catch (err) {
       next(err);

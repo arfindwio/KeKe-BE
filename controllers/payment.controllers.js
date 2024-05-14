@@ -65,7 +65,7 @@ module.exports = {
 
   getPaymentsHistory: catchAsync(async (req, res, next) => {
     try {
-      const { search, page = 1, limit = 10 } = req.query;
+      const { search, page = 1, limit = 5 } = req.query;
 
       const payments = await prisma.payment.findMany({
         skip: (Number(page) - 1) * Number(limit),
@@ -74,12 +74,23 @@ module.exports = {
         include: {
           cart: {
             select: {
+              quantity: true,
               note: true,
               product: {
                 select: {
                   productName: true,
-                  color: true,
-                  size: true,
+                  price: true,
+                  productImage: true,
+                },
+              },
+              color: {
+                select: {
+                  colorName: true,
+                },
+              },
+              size: {
+                select: {
+                  sizeName: true,
                 },
               },
             },
