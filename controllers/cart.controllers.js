@@ -8,6 +8,27 @@ module.exports = {
     try {
       const carts = await prisma.cart.findMany({
         where: { userId: Number(req.user.id), paymentId: null },
+        orderBy: { id: "asc" },
+        include: {
+          product: {
+            select: {
+              productName: true,
+              productImage: true,
+              price: true,
+              stock: true,
+            },
+          },
+          color: {
+            select: {
+              colorName: true,
+            },
+          },
+          size: {
+            select: {
+              sizeName: true,
+            },
+          },
+        },
       });
 
       res.status(200).json({

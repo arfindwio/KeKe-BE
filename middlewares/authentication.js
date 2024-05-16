@@ -43,6 +43,15 @@ module.exports = async function (req, res, next) {
 
     next();
   } catch (err) {
+    if (err.name === "JsonWebTokenError" && err.message === "jwt malformed") {
+      return res.status(401).json({
+        status: false,
+        message: "Unauthorized",
+        err: "Invalid token",
+        data: null,
+      });
+    }
+
     next(err);
   }
 };
