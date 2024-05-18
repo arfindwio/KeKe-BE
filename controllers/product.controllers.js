@@ -6,6 +6,7 @@ const { getPagination } = require("../utils/getPagination");
 const { CustomError } = require("../utils/errorHandler");
 const imagekit = require("../libs/imagekit");
 const { formattedDate } = require("../utils/formattedDate");
+const { calculatePredictedRating } = require("../utils/collaborativeFiltering");
 
 module.exports = {
   getAllProducts: catchAsync(async (req, res, next) => {
@@ -289,6 +290,71 @@ module.exports = {
         status: true,
         message: "show all products recommendation successful",
         data: { products },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
+  getProductsRecommendationUser: catchAsync(async (req, res, next) => {
+    try {
+      const ratings = await prisma.review.findMany();
+      const products = await prisma.product.findMany({
+        include: {
+          category: { select: { categoryName: true } },
+          review: { select: { userRating: true } },
+        },
+      });
+      const userRatings = ratings.filter((rating) => rating.userId === req.user.id);
+
+      const recommendationPromises = products.map(async (product) => {
+        if (!userRatings.some((rating) => rating.productId === product.id)) {
+          const predictedRating = await calculatePredictedRating(userRatings, product);
+          // Hitung rata-rata rating produk
+          const totalRating = product.review.reduce((acc, review) => acc + review.userRating, 0);
+          const averageRating = totalRating / product.review.length || 0; // Hindari pembagian dengan nol
+          return { ...product, predictedRating, averageRating };
+        }
+      });
+
+      const recommendationResults = await Promise.all(recommendationPromises);
+      let filteredRecommendations = recommendationResults.filter(Boolean);
+
+      // Urutkan berdasarkan predictedRating dan averageRating
+      filteredRecommendations.sort((a, b) => {
+        // Jika predictedRating sama, urutkan berdasarkan averageRating
+        if (a.predictedRating === b.predictedRating) {
+          return b.averageRating - a.averageRating;
+        }
+        // Urutkan secara descending berdasarkan predictedRating
+        return b.predictedRating - a.predictedRating;
+      });
+
+      const remainingProducts = await prisma.product.findMany({
+        where: {
+          NOT: {
+            id: {
+              in: filteredRecommendations.map((product) => product.id),
+            },
+          },
+        },
+        orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
+        include: {
+          category: { select: { categoryName: true } },
+          review: { select: { userRating: true } },
+        },
+      });
+      filteredRecommendations = filteredRecommendations.concat(remainingProducts);
+
+      filteredRecommendations.map((product) => {
+        delete product.predictedRating;
+        delete product.averageRating;
+      });
+
+      res.status(200).json({
+        status: true,
+        message: "show all products recommendation successful",
+        data: { products: filteredRecommendations },
       });
     } catch (err) {
       next(err);
