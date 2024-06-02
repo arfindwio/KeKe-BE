@@ -78,6 +78,7 @@ module.exports = {
               note: true,
               product: {
                 select: {
+                  id: true,
                   productName: true,
                   price: true,
                   productImage: true,
