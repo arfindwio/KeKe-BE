@@ -3142,6 +3142,22 @@
             }
           },
           {
+            "name": "f",
+            "in": "query",
+            "description": "Used to specify a particular filter when retrieving product data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "c",
+            "in": "query",
+            "description": "Used to specify a particular category when retrieving product data",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "page",
             "in": "query",
             "description": "Used to specify a particular page when retrieving products data",
@@ -3604,7 +3620,7 @@
         }
       }
     },
-    "/products/featured/recommendation-user": {
+    "/products/featured1/recommendation-user": {
       "get": {
         "tags": ["Products"],
         "operationId": "get-all-products-recommendation-user",

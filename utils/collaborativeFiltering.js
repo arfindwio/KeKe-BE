@@ -34,7 +34,6 @@ module.exports = {
         denominator += similarity;
       }
 
-      console.log(numerator / denominator);
       return denominator === 0 ? 0 : numerator / denominator;
     } catch (error) {
       console.error("Error in calculating predicted rating:", error);

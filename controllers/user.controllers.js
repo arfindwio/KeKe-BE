@@ -352,7 +352,6 @@ module.exports = {
       // Return error if user not found
       if (!user) throw new CustomError(404, "User not found");
 
-      delete user.id;
       delete user.otp;
       delete user.otpCreatedAt;
       delete user.isVerified;

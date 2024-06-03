@@ -16,6 +16,11 @@ module.exports = {
               productImage: true,
               price: true,
               stock: true,
+              promotion: {
+                select: {
+                  discount: true,
+                },
+              },
             },
           },
           color: {

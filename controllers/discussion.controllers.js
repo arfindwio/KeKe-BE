@@ -19,6 +19,7 @@ module.exports = {
       const discussions = await prisma.discussion.findMany({
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
+        orderBy: { createdAt: "asc" },
         where: { productId: Number(product.id) },
         include: {
           user: {
@@ -34,6 +35,7 @@ module.exports = {
           reply: {
             select: {
               replyMessage: true,
+              createdAt: true,
               user: {
                 select: {
                   userProfile: {

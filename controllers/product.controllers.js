@@ -11,12 +11,41 @@ const { calculatePredictedRating } = require("../utils/collaborativeFiltering");
 module.exports = {
   getAllProducts: catchAsync(async (req, res, next) => {
     try {
-      const { search, page = 1, limit = 10 } = req.query;
+      const { search, f, c, page = 1, limit = 10 } = req.query;
+
+      let productsQuery = {
+        where: {},
+        orderBy: [],
+      };
+
+      if (search) {
+        productsQuery.where.OR = [{ productName: { contains: search, mode: "insensitive" } }];
+      }
+
+      if (f) {
+        if (f.includes("newest")) {
+          productsQuery.orderBy.push({ createdAt: "asc" });
+        }
+        if (f.includes("populer")) {
+          productsQuery.orderBy.push({ review: { _count: "desc" } }, { soldCount: "desc" });
+        }
+        if (f.includes("promo")) {
+          productsQuery.where.promotionId = { not: null };
+        }
+      }
+
+      if (c) {
+        const categories = Array.isArray(c) ? c.map((category) => category.toLowerCase()) : [c.toLowerCase()];
+        productsQuery.where.category = {
+          categoryName: { in: categories, mode: "insensitive" },
+        };
+      }
 
       const products = await prisma.product.findMany({
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
-        where: search ? { productName: { contains: search, mode: "insensitive" } } : {},
+        where: productsQuery.where,
+        orderBy: productsQuery.orderBy,
         include: {
           category: {
             select: {
@@ -28,11 +57,16 @@ module.exports = {
               userRating: true,
             },
           },
+          promotion: {
+            select: {
+              discount: true,
+            },
+          },
         },
       });
 
       const totalProducts = await prisma.product.count({
-        where: search ? { productName: { contains: search, mode: "insensitive" } } : {},
+        where: productsQuery.where,
       });
 
       const pagination = getPagination(req, totalProducts, Number(page), Number(limit));
@@ -113,9 +147,15 @@ module.exports = {
     try {
       const { productId } = req.params;
 
+      const productData = await prisma.product.findUnique({
+        where: { id: Number(productId) },
+      });
+
+      if (!productData) throw new CustomError(404, "product Not Found");
+
       const product = await prisma.product.update({
         where: {
-          id: Number(productId),
+          id: Number(productData.id),
         },
         data: {
           viewCount: { increment: 1 },
@@ -140,8 +180,6 @@ module.exports = {
           },
         },
       });
-
-      if (!product) throw new CustomError(404, "product Not Found");
 
       res.status(200).json({
         status: true,
@@ -266,6 +304,7 @@ module.exports = {
         include: {
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
+          promotion: { select: { discount: true } },
         },
       });
       products.sort((a, b) => b.averageRating - a.averageRating);
@@ -282,6 +321,7 @@ module.exports = {
         include: {
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
+          promotion: { select: { discount: true } },
         },
       });
       products = products.concat(remainingProducts);
@@ -303,6 +343,7 @@ module.exports = {
         include: {
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
+          promotion: { select: { discount: true } },
         },
       });
       const userRatings = ratings.filter((rating) => rating.userId === req.user.id);
@@ -342,6 +383,7 @@ module.exports = {
         include: {
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
+          promotion: { select: { discount: true } },
         },
       });
       filteredRecommendations = filteredRecommendations.concat(remainingProducts);
