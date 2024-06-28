@@ -24,7 +24,7 @@ module.exports = {
 
       if (f) {
         if (f.includes("newest")) {
-          productsQuery.orderBy.push({ createdAt: "asc" });
+          productsQuery.orderBy.push({ id: "asc" });
         }
         if (f.includes("populer")) {
           productsQuery.orderBy.push({ review: { _count: "desc" } }, { soldCount: "desc" });
@@ -52,6 +52,18 @@ module.exports = {
               categoryName: true,
             },
           },
+          size: {
+            select: {
+              id: true,
+              sizeName: true,
+            },
+          },
+          color: {
+            select: {
+              id: true,
+              colorName: true,
+            },
+          },
           review: {
             select: {
               userRating: true,
@@ -60,6 +72,8 @@ module.exports = {
           promotion: {
             select: {
               discount: true,
+              startDate: true,
+              endDate: true,
             },
           },
         },
@@ -90,15 +104,13 @@ module.exports = {
 
       if (!productName || !file || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, categoryId and productImage");
 
-      if (promotionId === "null") throw new CustomError(400, "promotionId cannot be null");
-
       const category = await prisma.category.findUnique({
         where: { id: Number(categoryId) },
       });
 
       if (!category) throw new CustomError(404, "category Not Found");
 
-      if (promotionId) {
+      if (promotionId && promotionId !== "null") {
         const promotion = await prisma.promotion.findUnique({
           where: { id: Number(promotionId) },
         });
@@ -127,7 +139,7 @@ module.exports = {
           description,
           stock: Number(stock),
           categoryId: Number(category.id),
-          promotionId: promotionId ? Number(promotionId) : null,
+          promotionId: promotionId || promotionId !== "null" ? Number(promotionId) : null,
           createdAt: formattedDate(new Date()),
           updatedAt: formattedDate(new Date()),
         },
@@ -201,8 +213,6 @@ module.exports = {
 
       if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, categoryId and productImage");
 
-      if (promotionId === "null") throw new CustomError(400, "promotionId cannot be null");
-
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },
       });
@@ -213,7 +223,7 @@ module.exports = {
 
       if (!category || !product) throw new CustomError(404, "category or product Not Found");
 
-      if (promotionId) {
+      if (promotionId && promotionId !== "null") {
         const promotion = await prisma.promotion.findUnique({
           where: { id: Number(promotionId) },
         });
@@ -245,7 +255,7 @@ module.exports = {
           description,
           stock: Number(stock),
           categoryId: Number(category.id),
-          promotionId: promotionId ? Number(promotionId) : null,
+          promotionId: promotionId || promotionId !== "null" ? Number(promotionId) : null,
           updatedAt: formattedDate(new Date()),
         },
       });
@@ -410,12 +420,25 @@ module.exports = {
           promotionId: { not: null },
         },
         select: {
+          id: true,
           productImage: true,
           productName: true,
           description: true,
           price: true,
           soldCount: true,
           stock: true,
+          size: {
+            select: {
+              id: true,
+              sizeName: true,
+            },
+          },
+          color: {
+            select: {
+              id: true,
+              colorName: true,
+            },
+          },
           review: {
             select: {
               userRating: true,
