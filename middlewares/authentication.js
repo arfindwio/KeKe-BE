@@ -19,7 +19,16 @@ module.exports = async function (req, res, next) {
 
     const payload = jwt.verify(token, JWT_SECRET_KEY);
 
-    const user = await prisma.user.findUnique({ where: { id: payload.id } });
+    const user = await prisma.user.findUnique({
+      where: { id: payload.id },
+      include: {
+        userProfile: {
+          select: {
+            fullName: true,
+          },
+        },
+      },
+    });
 
     if (!user) {
       return res.status(401).json({

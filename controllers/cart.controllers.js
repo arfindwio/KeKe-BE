@@ -51,6 +51,10 @@ module.exports = {
       const { productId } = req.params;
       const { note, sizeId, colorId } = req.body;
 
+      if (!productId || !sizeId || !colorId) throw new CustomError(400, "Please provide productId, sizeId, and colorId");
+
+      if (typeof sizeId !== "number" || typeof colorId !== "number") throw new CustomError(400, "Please provide valid productId, sizeId, and colorId");
+
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },
         include: {

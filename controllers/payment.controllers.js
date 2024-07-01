@@ -35,11 +35,29 @@ module.exports = {
           cart: {
             select: {
               note: true,
+              size: {
+                select: {
+                  sizeName: true,
+                },
+              },
+              color: {
+                select: {
+                  colorName: true,
+                },
+              },
               product: {
                 select: {
                   productName: true,
-                  color: true,
-                  size: true,
+                },
+              },
+            },
+          },
+          user: {
+            select: {
+              userProfile: {
+                select: {
+                  fullName: true,
+                  address: true,
                 },
               },
             },
@@ -55,7 +73,7 @@ module.exports = {
 
       res.status(200).json({
         status: true,
-        message: "Get all payment history successful",
+        message: "Get all payment successful",
         data: { pagination, payments },
       });
     } catch (err) {
