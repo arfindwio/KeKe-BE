@@ -1,13 +1,12 @@
 const router = require("express").Router();
 const Auth = require("../middlewares/authentication");
 const checkRole = require("../middlewares/checkRole");
-const { image } = require("../libs/multer");
 const { getAllProducts, createProduct, getProductById, editProductById, deleteProductById, getProductsRecommendation, getProductsRecommendationUser, getSpecialOfferProduct } = require("../controllers/product.controllers");
 
 router.get("/", getAllProducts);
-router.post("/", Auth, checkRole(["Admin"]), image.single("image"), createProduct);
+router.post("/", Auth, checkRole(["Admin"]), createProduct);
 router.get("/:productId", getProductById);
-router.put("/:productId", Auth, checkRole(["Admin"]), image.single("image"), editProductById);
+router.put("/:productId", Auth, checkRole(["Admin"]), editProductById);
 router.delete("/:productId", Auth, checkRole(["Admin"]), deleteProductById);
 router.get("/featured/recommendation", getProductsRecommendation);
 router.get("/featured/recommendation-user", Auth, checkRole(["User", "Admin"]), getProductsRecommendationUser);

@@ -1,10 +1,7 @@
-const path = require("path");
-
 const prisma = require("../libs/prismaClient");
 const catchAsync = require("../utils/catchAsync");
 const { getPagination } = require("../utils/getPagination");
 const { CustomError } = require("../utils/errorHandler");
-const imagekit = require("../libs/imagekit");
 const { formattedDate } = require("../utils/formattedDate");
 const { calculatePredictedRating } = require("../utils/collaborativeFiltering");
 
@@ -50,6 +47,12 @@ module.exports = {
           category: {
             select: {
               categoryName: true,
+            },
+          },
+          image: {
+            select: {
+              id: true,
+              image: true,
             },
           },
           size: {
@@ -98,17 +101,15 @@ module.exports = {
   createProduct: catchAsync(async (req, res, next) => {
     try {
       const { productName, price, description, stock, categoryId, promotionId } = req.body;
-      const file = req.file;
-      let imageURL;
       let finalPrice = price;
 
-      if (!productName || !file || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, categoryId and productImage");
+      if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, and categoryId ");
 
       const category = await prisma.category.findUnique({
         where: { id: Number(categoryId) },
       });
 
-      if (!category) throw new CustomError(404, "category Not Found");
+      if (!category) throw new CustomError(404, "Category Not Found");
 
       if (promotionId && promotionId !== "null") {
         const promotion = await prisma.promotion.findUnique({
@@ -120,26 +121,14 @@ module.exports = {
         finalPrice = price - promotion.discount * price;
       }
 
-      if (file) {
-        const strFile = file.buffer.toString("base64");
-
-        const { url } = await imagekit.upload({
-          fileName: Date.now() + path.extname(req.file.originalname),
-          file: strFile,
-        });
-
-        imageURL = url;
-      }
-
       let newProduct = await prisma.product.create({
         data: {
-          productImage: imageURL,
           productName,
           price: Number(finalPrice),
           description,
           stock: Number(stock),
           categoryId: Number(category.id),
-          promotionId: promotionId || promotionId !== "null" ? Number(promotionId) : null,
+          promotionId: promotionId && promotionId !== "null" ? Number(promotionId) : null,
           createdAt: formattedDate(new Date()),
           updatedAt: formattedDate(new Date()),
         },
@@ -178,6 +167,12 @@ module.exports = {
               categoryName: true,
             },
           },
+          image: {
+            select: {
+              id: true,
+              image: true,
+            },
+          },
           color: {
             select: {
               id: true,
@@ -207,14 +202,18 @@ module.exports = {
     try {
       const { productId } = req.params;
       const { productName, price, description, stock, categoryId, promotionId } = req.body;
-      const file = req.file;
-      let imageURL;
-      let finalPrice = price;
 
-      if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, categoryId and productImage");
+      if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, and categoryId ");
 
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },
+        include: {
+          promotion: {
+            select: {
+              discount: true,
+            },
+          },
+        },
       });
 
       const category = await prisma.category.findUnique({
@@ -223,6 +222,8 @@ module.exports = {
 
       if (!category || !product) throw new CustomError(404, "category or product Not Found");
 
+      let finalPrice = Number(price);
+
       if (promotionId && promotionId !== "null") {
         const promotion = await prisma.promotion.findUnique({
           where: { id: Number(promotionId) },
@@ -230,18 +231,13 @@ module.exports = {
 
         if (!promotion) throw new CustomError(404, "Promotion not found");
 
-        finalPrice = price - promotion.discount * price;
-      }
+        if (product.promotion && product.price === price) {
+          finalPrice = price / (1 - product.promotion.discount);
+        }
 
-      if (file) {
-        const strFile = file.buffer.toString("base64");
-
-        const { url } = await imagekit.upload({
-          fileName: Date.now() + path.extname(req.file.originalname),
-          file: strFile,
-        });
-
-        imageURL = url;
+        finalPrice = price - price * promotion.discount;
+      } else if (promotionId === "null" && product.promotion) {
+        finalPrice = price / (1 - product.promotion.discount);
       }
 
       let editedProduct = await prisma.product.update({
@@ -249,13 +245,12 @@ module.exports = {
           id: Number(product.id),
         },
         data: {
-          productImage: imageURL,
           productName,
           price: Number(finalPrice),
           description,
           stock: Number(stock),
           categoryId: Number(category.id),
-          promotionId: promotionId || promotionId !== "null" ? Number(promotionId) : null,
+          promotionId: promotionId && promotionId !== "null" ? Number(promotionId) : null,
           updatedAt: formattedDate(new Date()),
         },
       });
@@ -312,6 +307,7 @@ module.exports = {
           : {},
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
+          image: { select: { image: true } },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -329,6 +325,7 @@ module.exports = {
         },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
+          image: { select: { image: true } },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -351,6 +348,7 @@ module.exports = {
       const ratings = await prisma.review.findMany();
       const products = await prisma.product.findMany({
         include: {
+          image: { select: { image: true } },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -391,6 +389,7 @@ module.exports = {
         },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
+          image: { select: { image: true } },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -421,12 +420,16 @@ module.exports = {
         },
         select: {
           id: true,
-          productImage: true,
           productName: true,
           description: true,
           price: true,
           soldCount: true,
           stock: true,
+          image: {
+            select: {
+              image: true,
+            },
+          },
           size: {
             select: {
               id: true,

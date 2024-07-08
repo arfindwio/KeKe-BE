@@ -10,15 +10,24 @@ module.exports = {
         where: { userId: Number(req.user.id), paymentId: null },
         orderBy: { id: "asc" },
         include: {
+          // promotion: {
+          //   select: {
+          //     discount: true,
+          //   },
+          // },
           product: {
             select: {
               productName: true,
-              productImage: true,
               price: true,
               stock: true,
               promotion: {
                 select: {
                   discount: true,
+                },
+              },
+              image: {
+                select: {
+                  image: true,
                 },
               },
             },
@@ -58,6 +67,7 @@ module.exports = {
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },
         include: {
+          promotion: true,
           size: true,
           color: true,
         },
@@ -95,6 +105,7 @@ module.exports = {
             sizeId: Number(sizeId),
             colorId: Number(colorId),
             productId: Number(productId),
+            // promotionId: Number(product.promotion.id),
             userId: Number(req.user.id),
             createdAt: formattedDate(new Date()),
             updatedAt: formattedDate(new Date()),
