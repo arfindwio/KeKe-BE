@@ -1,11 +1,7 @@
-// controllers/category.controllers.js
-const path = require("path");
-
 const prisma = require("../libs/prismaClient");
 const catchAsync = require("../utils/catchAsync");
 const { getPagination } = require("../utils/getPagination");
 const { CustomError } = require("../utils/errorHandler");
-const imagekit = require("../libs/imagekit");
 const { formattedDate } = require("../utils/formattedDate");
 
 module.exports = {
@@ -18,6 +14,12 @@ module.exports = {
         take: Number(limit),
         where: search ? { categoryName: { contains: search, mode: "insensitive" } } : {},
         include: {
+          image: {
+            select: {
+              id: true,
+              image: true,
+            },
+          },
           product: {
             select: {
               soldCount: true,
@@ -52,25 +54,11 @@ module.exports = {
   createCategory: catchAsync(async (req, res, next) => {
     try {
       const { categoryName } = req.body;
-      const file = req.file;
-      let imageURL;
 
-      if (!categoryName || !file) throw new CustomError(400, "Please provide categoryName and categoryImage");
-
-      if (file) {
-        const strFile = file.buffer.toString("base64");
-
-        const { url } = await imagekit.upload({
-          fileName: Date.now() + path.extname(req.file.originalname),
-          file: strFile,
-        });
-
-        imageURL = url;
-      }
+      if (!categoryName) throw new CustomError(400, "Please provide categoryName");
 
       let newCategory = await prisma.category.create({
         data: {
-          categoryImage: imageURL,
           categoryName,
           createdAt: formattedDate(new Date()),
           updatedAt: formattedDate(new Date()),
@@ -91,8 +79,6 @@ module.exports = {
     try {
       const { categoryId } = req.params;
       const { categoryName } = req.body;
-      const file = req.file;
-      let imageURL;
 
       if (!categoryName) throw new CustomError(400, "Please provide categoryName");
 
@@ -102,23 +88,11 @@ module.exports = {
 
       if (!category) throw new CustomError(404, "category Not Found");
 
-      if (file) {
-        const strFile = file.buffer.toString("base64");
-
-        const { url } = await imagekit.upload({
-          fileName: Date.now() + path.extname(req.file.originalname),
-          file: strFile,
-        });
-
-        imageURL = url;
-      }
-
       let editedCategory = await prisma.category.update({
         where: {
           id: Number(category.id),
         },
         data: {
-          categoryImage: imageURL,
           categoryName,
           updatedAt: formattedDate(new Date()),
         },
