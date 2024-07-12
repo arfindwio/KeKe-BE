@@ -94,12 +94,21 @@ module.exports = {
             select: {
               quantity: true,
               note: true,
+              // promotion: {
+              //   select: {
+              //     discount: true,
+              //   },
+              // },
               product: {
                 select: {
                   id: true,
                   productName: true,
                   price: true,
-                  productImage: true,
+                  image: {
+                    select: {
+                      image: true,
+                    },
+                  },
                 },
               },
               color: {

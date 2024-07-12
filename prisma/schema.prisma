@@ -59,12 +59,12 @@ model Notification {
 }
 
 model Category {
-  id            Int       @id @default(autoincrement())
-  categoryImage String
-  categoryName  String
-  createdAt     String
-  updatedAt     String
-  product       Product[]
+  id           Int       @id @default(autoincrement())
+  categoryName String
+  createdAt    String
+  updatedAt    String
+  image        Image?
+  product      Product[]
 }
 
 model Promotion {
@@ -75,28 +75,40 @@ model Promotion {
   createdAt String
   updatedAt String
   product   Product[]
+  cart      Cart[]
 }
 
 model Product {
-  id           Int          @id @default(autoincrement())
-  productImage String
-  productName  String
-  price        Int
-  description  String
-  stock        Int
-  viewCount    Int          @default(0)
-  soldCount    Int          @default(0)
-  createdAt    String
-  updatedAt    String
-  categoryId   Int
-  category     Category     @relation(fields: [categoryId], references: [id])
-  promotionId  Int?
-  promotion    Promotion?   @relation(fields: [promotionId], references: [id])
-  size         Size[]
-  color        Color[]
-  cart         Cart[]
-  discussion   Discussion[]
-  review       Review[]
+  id          Int          @id @default(autoincrement())
+  productName String
+  price       Int
+  description String
+  stock       Int
+  viewCount   Int          @default(0)
+  soldCount   Int          @default(0)
+  createdAt   String
+  updatedAt   String
+  categoryId  Int
+  category    Category     @relation(fields: [categoryId], references: [id])
+  promotionId Int?
+  promotion   Promotion?   @relation(fields: [promotionId], references: [id])
+  image       Image[]
+  size        Size[]
+  color       Color[]
+  cart        Cart[]
+  discussion  Discussion[]
+  review      Review[]
+}
+
+model Image {
+  id         Int       @id @default(autoincrement())
+  image      String
+  createdAt  String
+  updatedAt  String
+  categoryId Int?      @unique
+  category   Category? @relation(fields: [categoryId], references: [id])
+  productId  Int?
+  product    Product?  @relation(fields: [productId], references: [id])
 }
 
 model Size {
@@ -143,21 +155,23 @@ model Reply {
 }
 
 model Cart {
-  id        Int      @id @default(autoincrement())
-  quantity  Int      @default(1)
-  note      String?
-  createdAt String
-  updatedAt String
-  productId Int
-  product   Product  @relation(fields: [productId], references: [id])
-  sizeId    Int?
-  size      Size?    @relation(fields: [sizeId], references: [id])
-  colorId   Int?
-  color     Color?   @relation(fields: [colorId], references: [id])
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  paymentId Int?
-  payment   Payment? @relation(fields: [paymentId], references: [id])
+  id          Int        @id @default(autoincrement())
+  quantity    Int        @default(1)
+  note        String?
+  createdAt   String
+  updatedAt   String
+  productId   Int
+  product     Product    @relation(fields: [productId], references: [id])
+  sizeId      Int?
+  size        Size?      @relation(fields: [sizeId], references: [id])
+  colorId     Int?
+  color       Color?     @relation(fields: [colorId], references: [id])
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+  promotionId Int?
+  promotion   Promotion? @relation(fields: [promotionId], references: [id])
+  paymentId   Int?
+  payment     Payment?   @relation(fields: [paymentId], references: [id])
 }
 
 model Payment {

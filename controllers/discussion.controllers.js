@@ -22,6 +22,12 @@ module.exports = {
               },
             },
           },
+          product: {
+            select: {
+              id: true,
+              productName: true,
+            },
+          },
           reply: {
             orderBy: {
               id: "asc",
