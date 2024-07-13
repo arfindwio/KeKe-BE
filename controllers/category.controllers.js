@@ -12,7 +12,12 @@ module.exports = {
       const categories = await prisma.category.findMany({
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
-        where: search ? { categoryName: { contains: search, mode: "insensitive" } } : {},
+        where: search
+          ? {
+              categoryName: { contains: search, mode: "insensitive" },
+              isDeleted: false,
+            }
+          : { isDeleted: false },
         include: {
           image: {
             select: {
@@ -29,7 +34,12 @@ module.exports = {
       });
 
       const totalCategories = await prisma.category.count({
-        where: search ? { categoryName: { contains: search, mode: "insensitive" } } : {},
+        where: search
+          ? {
+              categoryName: { contains: search, mode: "insensitive" },
+              isDeleted: false,
+            }
+          : { isDeleted: false },
       });
 
       const pagination = getPagination(req, totalCategories, Number(page), Number(limit));
@@ -83,7 +93,7 @@ module.exports = {
       if (!categoryName) throw new CustomError(400, "Please provide categoryName");
 
       const category = await prisma.category.findUnique({
-        where: { id: Number(categoryId) },
+        where: { id: Number(categoryId), isDeleted: false },
       });
 
       if (!category) throw new CustomError(404, "category Not Found");
@@ -113,14 +123,18 @@ module.exports = {
       const { categoryId } = req.params;
 
       const category = await prisma.category.findUnique({
-        where: { id: Number(categoryId) },
+        where: { id: Number(categoryId), isDeleted: false },
       });
 
       if (!category) throw new CustomError(404, "Category Not Found");
 
-      const deletedCategory = await prisma.category.delete({
+      const deletedCategory = await prisma.category.update({
         where: {
           id: Number(category.id),
+        },
+        data: {
+          isDeleted: true,
+          updatedAt: formattedDate(new Date()),
         },
       });
 

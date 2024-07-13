@@ -12,7 +12,7 @@ module.exports = {
       if (!replyMessage) throw new CustomError(400, "Please provide replyMessage");
 
       const discussion = await prisma.discussion.findUnique({
-        where: { id: Number(discussionId) },
+        where: { id: Number(discussionId), isDeleted: false },
       });
 
       if (!discussion) throw new CustomError(404, "discussion Not Found");
@@ -43,16 +43,20 @@ module.exports = {
       const userId = req.user.id;
 
       let reply = await prisma.reply.findUnique({
-        where: { id: Number(replyId) },
+        where: { id: Number(replyId), isDeleted: false },
       });
 
       if (!reply) throw new CustomError(404, "Reply not found");
 
       if (req.user.role !== "Admin" && reply.userId !== userId) throw new CustomError(403, "This is not your reply chat");
 
-      const deletedReply = await prisma.reply.delete({
+      const deletedReply = await prisma.reply.update({
         where: {
           id: Number(reply.id),
+        },
+        data: {
+          isDeleted: true,
+          updatedAt: formattedDate(new Date()),
         },
       });
 

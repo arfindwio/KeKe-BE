@@ -12,11 +12,25 @@ module.exports = {
       const promotions = await prisma.promotion.findMany({
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
-        where: search ? { discount: { contains: search, mode: "insensitive" } } : {},
+        where: search
+          ? {
+              discount: { contains: search, mode: "insensitive" },
+              isDeleted: false,
+            }
+          : {
+              isDeleted: false,
+            },
       });
 
       const totalPromotions = await prisma.promotion.count({
-        where: search ? { discount: { contains: search, mode: "insensitive" } } : {},
+        where: search
+          ? {
+              discount: { contains: search, mode: "insensitive" },
+              isDeleted: false,
+            }
+          : {
+              isDeleted: false,
+            },
       });
 
       const pagination = getPagination(req, totalPromotions, Number(page), Number(limit));
@@ -84,7 +98,7 @@ module.exports = {
       if (!discount || !startDate || !endDate) throw new CustomError(400, "Please provide discount, startDate, and endDate");
 
       const promotion = await prisma.promotion.findUnique({
-        where: { id: Number(promotionId) },
+        where: { id: Number(promotionId), isDeleted: false },
       });
 
       if (!promotion) throw new CustomError(404, "Promotion not found");
@@ -117,13 +131,17 @@ module.exports = {
       const { promotionId } = req.params;
 
       const promotion = await prisma.promotion.findUnique({
-        where: { id: Number(promotionId) },
+        where: { id: Number(promotionId), isDeleted: false },
       });
 
       if (!promotion) throw new CustomError(404, "Promotion not found");
 
-      const deletedPromotion = await prisma.promotion.delete({
+      const deletedPromotion = await prisma.promotion.update({
         where: { id: Number(promotion.id) },
+        data: {
+          isDeleted: true,
+          updatedAt: formattedDate(new Date()),
+        },
       });
 
       res.status(200).json({

@@ -48,6 +48,7 @@ CREATE TABLE "Notification" (
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
     "categoryName" TEXT NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
 
@@ -60,6 +61,7 @@ CREATE TABLE "Promotion" (
     "discount" DECIMAL(65,30) NOT NULL,
     "startDate" TEXT NOT NULL,
     "endDate" TEXT NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
 
@@ -75,6 +77,7 @@ CREATE TABLE "Product" (
     "stock" INTEGER NOT NULL,
     "viewCount" INTEGER NOT NULL DEFAULT 0,
     "soldCount" INTEGER NOT NULL DEFAULT 0,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
     "categoryId" INTEGER NOT NULL,
@@ -121,6 +124,7 @@ CREATE TABLE "Color" (
 CREATE TABLE "Discussion" (
     "id" SERIAL NOT NULL,
     "userMessage" TEXT NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
@@ -133,6 +137,7 @@ CREATE TABLE "Discussion" (
 CREATE TABLE "Reply" (
     "id" SERIAL NOT NULL,
     "replyMessage" TEXT NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
