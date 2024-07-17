@@ -11,7 +11,7 @@ module.exports = {
       const { search, f, c, page = 1, limit = 10 } = req.query;
 
       let productsQuery = {
-        where: {},
+        where: { isDeleted: false },
         orderBy: [],
       };
 
@@ -106,14 +106,14 @@ module.exports = {
       if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, and categoryId ");
 
       const category = await prisma.category.findUnique({
-        where: { id: Number(categoryId) },
+        where: { id: Number(categoryId), isDeleted: false },
       });
 
       if (!category) throw new CustomError(404, "Category Not Found");
 
       if (promotionId && promotionId !== "null") {
         const promotion = await prisma.promotion.findUnique({
-          where: { id: Number(promotionId) },
+          where: { id: Number(promotionId), isDeleted: false },
         });
 
         if (!promotion) throw new CustomError(404, "Promotion not found");
@@ -149,7 +149,7 @@ module.exports = {
       const { productId } = req.params;
 
       const productData = await prisma.product.findUnique({
-        where: { id: Number(productId) },
+        where: { id: Number(productId), isDeleted: false },
       });
 
       if (!productData) throw new CustomError(404, "product Not Found");
@@ -174,12 +174,18 @@ module.exports = {
             },
           },
           color: {
+            orderBy: {
+              id: "asc",
+            },
             select: {
               id: true,
               colorName: true,
             },
           },
           size: {
+            orderBy: {
+              id: "asc",
+            },
             select: {
               id: true,
               sizeName: true,
@@ -206,7 +212,7 @@ module.exports = {
       if (!productName || !price || !description || !stock || !categoryId) throw new CustomError(400, "Please provide productName, price, description, stock, and categoryId ");
 
       const product = await prisma.product.findUnique({
-        where: { id: Number(productId) },
+        where: { id: Number(productId), isDeleted: false },
         include: {
           promotion: {
             select: {
@@ -217,7 +223,7 @@ module.exports = {
       });
 
       const category = await prisma.category.findUnique({
-        where: { id: Number(categoryId) },
+        where: { id: Number(categoryId), isDeleted: false },
       });
 
       if (!category || !product) throw new CustomError(404, "category or product Not Found");
@@ -226,18 +232,12 @@ module.exports = {
 
       if (promotionId && promotionId !== "null") {
         const promotion = await prisma.promotion.findUnique({
-          where: { id: Number(promotionId) },
+          where: { id: Number(promotionId), isDeleted: false },
         });
 
         if (!promotion) throw new CustomError(404, "Promotion not found");
 
-        if (product.promotion && product.price === price) {
-          finalPrice = price / (1 - product.promotion.discount);
-        }
-
         finalPrice = price - price * promotion.discount;
-      } else if (promotionId === "null" && product.promotion) {
-        finalPrice = price / (1 - product.promotion.discount);
       }
 
       let editedProduct = await prisma.product.update({
@@ -252,6 +252,14 @@ module.exports = {
           categoryId: Number(category.id),
           promotionId: promotionId && promotionId !== "null" ? Number(promotionId) : null,
           updatedAt: formattedDate(new Date()),
+          cart: {
+            updateMany: {
+              where: { productId: Number(product.id) },
+              data: {
+                promotionId: promotionId && promotionId !== "null" ? Number(promotionId) : null,
+              },
+            },
+          },
         },
       });
 
@@ -270,14 +278,18 @@ module.exports = {
       const { productId } = req.params;
 
       const product = await prisma.product.findUnique({
-        where: { id: Number(productId) },
+        where: { id: Number(productId), isDeleted: false },
       });
 
       if (!product) throw new CustomError(404, "product Not Found");
 
-      const deletedProduct = await prisma.product.delete({
+      const deletedProduct = await prisma.product.update({
         where: {
           id: Number(productId),
+        },
+        data: {
+          isDeleted: true,
+          updatedAt: formattedDate(new Date()),
         },
       });
 
@@ -303,8 +315,9 @@ module.exports = {
         where: search
           ? {
               productName: { contains: search, mode: "insensitive" },
+              isDeleted: false,
             }
-          : {},
+          : { isDeleted: false },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
           image: { select: { image: true } },
@@ -317,6 +330,7 @@ module.exports = {
 
       const remainingProducts = await prisma.product.findMany({
         where: {
+          isDeleted: false,
           NOT: {
             id: {
               in: products.map((product) => product.id),
@@ -347,6 +361,7 @@ module.exports = {
     try {
       const ratings = await prisma.review.findMany();
       const products = await prisma.product.findMany({
+        where: { isDeleted: false },
         include: {
           image: { select: { image: true } },
           category: { select: { categoryName: true } },
@@ -381,6 +396,7 @@ module.exports = {
 
       const remainingProducts = await prisma.product.findMany({
         where: {
+          isDeleted: false,
           NOT: {
             id: {
               in: filteredRecommendations.map((product) => product.id),
@@ -416,6 +432,7 @@ module.exports = {
     try {
       const product = await prisma.product.findFirst({
         where: {
+          isDeleted: false,
           promotionId: { not: null },
         },
         select: {

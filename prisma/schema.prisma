@@ -61,6 +61,7 @@ model Notification {
 model Category {
   id           Int       @id @default(autoincrement())
   categoryName String
+  isDeleted    Boolean   @default(false)
   createdAt    String
   updatedAt    String
   image        Image?
@@ -72,6 +73,7 @@ model Promotion {
   discount  Decimal
   startDate String
   endDate   String
+  isDeleted Boolean   @default(false)
   createdAt String
   updatedAt String
   product   Product[]
@@ -86,6 +88,7 @@ model Product {
   stock       Int
   viewCount   Int          @default(0)
   soldCount   Int          @default(0)
+  isDeleted   Boolean      @default(false)
   createdAt   String
   updatedAt   String
   categoryId  Int
@@ -134,6 +137,7 @@ model Color {
 model Discussion {
   id          Int     @id @default(autoincrement())
   userMessage String
+  isDeleted   Boolean @default(false)
   createdAt   String
   updatedAt   String
   userId      Int
@@ -146,6 +150,7 @@ model Discussion {
 model Reply {
   id           Int        @id @default(autoincrement())
   replyMessage String
+  isDeleted    Boolean    @default(false)
   createdAt    String
   updatedAt    String
   userId       Int

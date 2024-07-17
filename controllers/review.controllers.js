@@ -8,7 +8,7 @@ module.exports = {
   getReviewsByProductId: catchAsync(async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const { page = 1, limit = 10 } = req.query;
+      const { page = 1, limit = 6 } = req.query;
 
       const product = await prisma.product.findUnique({
         where: { id: Number(productId) },

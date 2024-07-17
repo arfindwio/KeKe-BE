@@ -77,6 +77,14 @@ module.exports = {
         throw new CustomError(404, "Product, size, or color not found.");
       }
 
+      const carts = await prisma.cart.findMany({
+        where: { productId: Number(productId), userId: Number(req.user.id), paymentId: null },
+      });
+
+      const totalQuantity = carts.reduce((acc, cart) => acc + cart.quantity, 0);
+
+      if (product.stock <= totalQuantity) throw new CustomError(400, "Insufficient stock quantity.");
+
       let newCart = await prisma.cart.findFirst({
         where: {
           productId: Number(productId),
@@ -105,7 +113,7 @@ module.exports = {
             sizeId: Number(sizeId),
             colorId: Number(colorId),
             productId: Number(productId),
-            // promotionId: Number(product.promotion.id),
+            promotionId: product.promotion ? Number(product.promotion.id) : null,
             userId: Number(req.user.id),
             createdAt: formattedDate(new Date()),
             updatedAt: formattedDate(new Date()),
@@ -132,11 +140,26 @@ module.exports = {
 
       const cart = await prisma.cart.findUnique({
         where: { id: Number(cartId) },
+        include: {
+          product: {
+            select: {
+              stock: true,
+            },
+          },
+        },
       });
 
       if (!cart) throw new CustomError(404, "cart Not Found");
 
-      let editedCart = await prisma.cart.update({
+      const carts = await prisma.cart.findMany({
+        where: { productId: Number(cart.productId), userId: Number(req.user.id), paymentId: null },
+      });
+
+      const totalQuantity = carts.filter((cart) => cart.id !== Number(cartId)).reduce((accumulator, cart) => accumulator + cart.quantity, 0);
+
+      if (cart.product.stock < totalQuantity + quantity) throw new CustomError(400, "Insufficient stock quantity.");
+
+      editedCart = await prisma.cart.update({
         where: {
           id: Number(cart.id),
         },

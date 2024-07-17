@@ -7,10 +7,11 @@ const { getPagination } = require("../utils/getPagination");
 module.exports = {
   getAllDiscussions: catchAsync(async (req, res, next) => {
     try {
-      const { page = 1, limit = 20 } = req.query;
+      const { page = 1, limit = 10 } = req.query;
 
       // Fetch all discussions with nested relations
       const allDiscussions = await prisma.discussion.findMany({
+        where: { isDeleted: false },
         include: {
           user: {
             select: {
@@ -29,6 +30,7 @@ module.exports = {
             },
           },
           reply: {
+            where: { isDeleted: false },
             orderBy: {
               id: "asc",
             },
@@ -112,10 +114,10 @@ module.exports = {
   getDiscussionsByProductId: catchAsync(async (req, res, next) => {
     try {
       const { productId } = req.params;
-      const { page = 1, limit = 10 } = req.query;
+      const { page = 1, limit = 5 } = req.query;
 
       const product = await prisma.product.findUnique({
-        where: { id: Number(productId) },
+        where: { id: Number(productId), isDeleted: false },
       });
 
       if (!product) throw new CustomError(404, "product Not Found");
@@ -124,7 +126,7 @@ module.exports = {
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
         orderBy: { createdAt: "asc" },
-        where: { productId: Number(product.id) },
+        where: { productId: Number(product.id), isDeleted: false },
         include: {
           user: {
             select: {
@@ -138,6 +140,7 @@ module.exports = {
             },
           },
           reply: {
+            where: { isDeleted: false },
             select: {
               id: true,
               replyMessage: true,
@@ -182,7 +185,7 @@ module.exports = {
       if (!userMessage) throw new CustomError(400, "Please provide userMessage");
 
       const product = await prisma.product.findUnique({
-        where: { id: Number(productId) },
+        where: { id: Number(productId), isDeleted: false },
       });
 
       if (!product) throw new CustomError(404, "product Not Found");
@@ -233,7 +236,7 @@ module.exports = {
       const userId = req.user.id;
 
       const discussion = await prisma.discussion.findUnique({
-        where: { id: Number(discussionId) },
+        where: { id: Number(discussionId), isDeleted: false },
         include: {
           reply: {
             select: {
@@ -247,15 +250,19 @@ module.exports = {
 
       if (req.user.role !== "Admin" && discussion.userId !== userId) throw new CustomError(403, "This is not your discussion chat");
 
-      if (discussion.reply) {
-        await prisma.reply.deleteMany({
-          where: { discussionId: Number(discussion.id) },
-        });
-      }
+      // if (discussion.reply) {
+      //   await prisma.reply.deleteMany({
+      //     where: { discussionId: Number(discussion.id) },
+      //   });
+      // }
 
-      const deletedDiscussion = await prisma.discussion.delete({
+      const deletedDiscussion = await prisma.discussion.update({
         where: {
           id: Number(discussion.id),
+        },
+        data: {
+          isDeleted: true,
+          updatedAt: formattedDate(new Date()),
         },
       });
 
