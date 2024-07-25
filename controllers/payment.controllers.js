@@ -146,18 +146,6 @@ module.exports = {
     try {
       const { methodPayment, cardNumber, cvv, expiryDate, bankName, store, message } = req.body;
 
-      // Extract month and year from expiryDate
-      let month = expiryDate.slice(0, 2);
-      let year = expiryDate.slice(3);
-
-      // Set the Midtrans API URL based on the environment
-      const apiUrl = isProduction ? `https://api.midtrans.com/v2/token?client_key=${PAYMENT_PROD_CLIENT_KEY}` : `https://api.sandbox.midtrans.com/v2/token?client_key=${PAYMENT_DEV_CLIENT_KEY}`;
-
-      // Get card token from Midtrans API
-      const response = await axios.get(`${apiUrl}&card_number=${cardNumber}&card_cvv=${cvv}&card_exp_month=${month}&card_exp_year=${`20${year}`}`);
-
-      const token_id = response.data.token_id;
-
       const user = await prisma.user.findUnique({
         where: { id: Number(req.user.id) },
         include: {
@@ -187,7 +175,7 @@ module.exports = {
       // Create a new payment record in the database
       let newPayment = await prisma.payment.create({
         data: {
-          amount: totalPrice,
+          amount: Number(Math.floor(0.11 * totalPrice + totalPrice)),
           paymentStatus: "Paid",
           methodPayment,
           paymentCode: paymentCodeOrder,
@@ -201,7 +189,7 @@ module.exports = {
       let parameter = {
         transaction_details: {
           order_id: paymentCodeOrder,
-          gross_amount: parseInt(totalPrice),
+          gross_amount: Number(Math.floor(0.11 * totalPrice + totalPrice)),
         },
         customer_details: {
           first_name: user.userProfile.fullName,
@@ -215,6 +203,18 @@ module.exports = {
         if (!cardNumber || !cvv || !expiryDate || bankName !== undefined || store !== undefined || message !== undefined) {
           throw new CustomError(400, "For Credit Card payments, please provide only card details (cardNumber, cvv, expiryDate). Other fields are not applicable.");
         }
+
+        // Extract month and year from expiryDate
+        let month = expiryDate.slice(0, 2);
+        let year = expiryDate.slice(3);
+
+        // Set the Midtrans API URL based on the environment
+        const apiUrl = isProduction ? `https://api.midtrans.com/v2/token?client_key=${PAYMENT_PROD_CLIENT_KEY}` : `https://api.sandbox.midtrans.com/v2/token?client_key=${PAYMENT_DEV_CLIENT_KEY}`;
+
+        // Get card token from Midtrans API
+        const response = await axios.get(`${apiUrl}&card_number=${cardNumber}&card_cvv=${cvv}&card_exp_month=${month}&card_exp_year=${`20${year}`}`);
+
+        const token_id = response.data.token_id;
 
         parameter.payment_type = "credit_card";
         parameter.credit_card = {
@@ -267,7 +267,7 @@ module.exports = {
       }
 
       if (methodPayment === "Counter") {
-        if (bankName !== undefined || cardNumber !== undefined || cvv !== undefined || expiryDate !== undefined || !store || !message) {
+        if (bankName !== undefined || cardNumber !== undefined || cvv !== undefined || expiryDate !== undefined || !store) {
           throw new CustomError(400, "Please provide only the required card details (cardNumber, cvv, expiryDate) for this payment method. Other fields are not applicable.");
         }
 
@@ -303,7 +303,7 @@ module.exports = {
       const html = await nodemailer.getHtml("transaction-success.ejs", {
         methodPayment,
       });
-      await nodemailer.sendEmail(user.email, "Email Transaction", html);
+      nodemailer.sendEmail(user.email, "Email Transaction", html);
 
       await prisma.notification.create({
         data: {
