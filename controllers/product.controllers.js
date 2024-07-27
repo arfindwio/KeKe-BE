@@ -12,7 +12,7 @@ module.exports = {
 
       let productsQuery = {
         where: { isDeleted: false },
-        orderBy: [],
+        orderBy: [{ stock: "desc" }],
       };
 
       if (search) {
@@ -165,6 +165,11 @@ module.exports = {
           category: {
             select: {
               categoryName: true,
+            },
+          },
+          promotion: {
+            select: {
+              discount: true,
             },
           },
           image: {
