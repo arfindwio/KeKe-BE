@@ -21,10 +21,10 @@ module.exports = {
 
       if (f) {
         if (f.includes("newest")) {
-          productsQuery.orderBy.push({ id: "asc" });
+          productsQuery.orderBy.unshift({ id: "asc" });
         }
         if (f.includes("populer")) {
-          productsQuery.orderBy.push({ review: { _count: "desc" } }, { soldCount: "desc" });
+          productsQuery.orderBy.unshift({ review: { _count: "desc" } }, { soldCount: "desc" });
         }
         if (f.includes("promo")) {
           productsQuery.where.promotionId = { not: null };

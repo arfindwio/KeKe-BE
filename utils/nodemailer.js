@@ -20,13 +20,13 @@ module.exports = {
         to,
         subject,
         html,
-        attachments: [
-          {
-            filename: "TravelesiaLogo.svg",
-            path: "https://ik.imagekit.io/arfin07/TravelesiaLogo.svg",
-            cid: "logo",
-          },
-        ],
+        // attachments: [
+        //   {
+        //     filename: "TravelesiaLogo.svg",
+        //     path: "https://ik.imagekit.io/arfin07/TravelesiaLogo.svg",
+        //     cid: "logo",
+        //   },
+        // ],
       };
 
       await new Promise((resolve, reject) => {

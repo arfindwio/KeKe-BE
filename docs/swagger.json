@@ -3620,7 +3620,7 @@
         }
       }
     },
-    "/products/featured1/recommendation-user": {
+    "/products/featured/recommendation-user": {
       "get": {
         "tags": ["Products"],
         "operationId": "get-all-products-recommendation-user",

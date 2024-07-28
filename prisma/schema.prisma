@@ -106,6 +106,7 @@ model Product {
 model Image {
   id         Int       @id @default(autoincrement())
   image      String
+  fileId     String
   createdAt  String
   updatedAt  String
   categoryId Int?      @unique

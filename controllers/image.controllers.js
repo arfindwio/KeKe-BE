@@ -11,19 +11,20 @@ module.exports = {
     try {
       const { categoryId, productId } = req.body;
       const file = req.file;
-      let imageURL;
+      let imageURL, fileId;
 
       if (!file) throw new CustomError(400, "Please provide image");
 
       if (file) {
         const strFile = file.buffer.toString("base64");
 
-        const { url } = await imagekit.upload({
+        const { url, fileId: imageFileId } = await imagekit.upload({
           fileName: Date.now() + path.extname(req.file.originalname),
           file: strFile,
         });
 
         imageURL = url;
+        fileId = imageFileId;
       }
 
       if (categoryId && categoryId !== "null") {
@@ -45,6 +46,7 @@ module.exports = {
       let newImage = await prisma.image.create({
         data: {
           image: imageURL,
+          fileId: fileId,
           categoryId: categoryId || categoryId !== "null" ? Number(categoryId) : null,
           productId: productId || productId !== "null" ? Number(productId) : null,
           createdAt: formattedDate(new Date()),
@@ -68,6 +70,7 @@ module.exports = {
       const { categoryId, productId } = req.body;
       const file = req.file;
       let imageURL;
+      let fileId;
 
       const image = await prisma.image.findUnique({
         where: { id: Number(imageId) },
@@ -78,12 +81,17 @@ module.exports = {
       if (file) {
         const strFile = file.buffer.toString("base64");
 
-        const { url } = await imagekit.upload({
+        if (image.fileId) {
+          await imagekit.deleteFile(image.fileId);
+        }
+
+        const { url, fileId: newFileId } = await imagekit.upload({
           fileName: Date.now() + path.extname(req.file.originalname),
           file: strFile,
         });
 
         imageURL = url;
+        fileId = newFileId;
       }
 
       if (categoryId && categoryId !== "null") {
@@ -108,6 +116,7 @@ module.exports = {
         },
         data: {
           image: imageURL,
+          fileId: fileId,
           categoryId: categoryId || categoryId !== "null" ? Number(categoryId) : null,
           productId: productId || productId !== "null" ? Number(productId) : null,
           updatedAt: formattedDate(new Date()),
@@ -133,6 +142,8 @@ module.exports = {
       });
 
       if (!image) throw new CustomError(404, "Image Not Found");
+
+      await imagekit.deleteFile(image.fileId);
 
       const deletedImage = await prisma.image.delete({
         where: {
