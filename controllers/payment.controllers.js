@@ -172,19 +172,6 @@ module.exports = {
 
       const paymentCodeOrder = generatedPaymentCode();
 
-      // Create a new payment record in the database
-      let newPayment = await prisma.payment.create({
-        data: {
-          amount: Number(Math.floor(0.11 * totalPrice + totalPrice)),
-          paymentStatus: "Paid",
-          methodPayment,
-          paymentCode: paymentCodeOrder,
-          userId: Number(req.user.id),
-          createdAt: formattedDate(new Date()),
-          updatedAt: formattedDate(new Date()),
-        },
-      });
-
       // Define payment parameters for Midtrans API
       let parameter = {
         transaction_details: {
@@ -297,6 +284,18 @@ module.exports = {
 
         parameter.payment_type = "akulaku";
       }
+
+      let newPayment = await prisma.payment.create({
+        data: {
+          amount: Number(Math.floor(0.11 * totalPrice + totalPrice)),
+          paymentStatus: "Paid",
+          methodPayment,
+          paymentCode: paymentCodeOrder,
+          userId: Number(req.user.id),
+          createdAt: formattedDate(new Date()),
+          updatedAt: formattedDate(new Date()),
+        },
+      });
 
       let transaction = await core.charge(parameter);
 
