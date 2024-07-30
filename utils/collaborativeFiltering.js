@@ -6,19 +6,34 @@ const cosineSimilarity = async (productA, productB) => {
   const ratingsA = ratings.filter((rating) => rating.productId === productA.id);
   const ratingsB = ratings.filter((rating) => rating.productId === productB.productId);
 
-  const vectorA = ratingsA.map((rating) => rating.userRating);
-  const vectorB = ratingsB.map((rating) => rating.userRating);
+  // Ambil userId dari ratingsB
+  const userIdsA = new Set(ratingsA.map((rating) => rating.userId));
+  const userIdsB = new Set(ratingsB.map((rating) => rating.userId));
 
-  const minLength = Math.min(vectorA.length, vectorB.length);
-  const dotProduct = vectorA.slice(0, minLength).reduce((acc, ratingA, index) => acc + ratingA * vectorB[index], 0);
+  // Temukan objek dari ratingsA yang userId-nya ada di userIdsB
+  const commonRatingsA = ratingsA.filter((rating) => userIdsB.has(rating.userId));
+  const commonRatingsB = ratingsB.filter((rating) => userIdsA.has(rating.userId));
 
-  const magnitudeA = Math.sqrt(vectorA.reduce((acc, rating) => acc + rating ** 2, 0));
-  const magnitudeB = Math.sqrt(vectorB.reduce((acc, rating) => acc + rating ** 2, 0));
+  const allRatings = [...commonRatingsA, ...commonRatingsB];
+
+  const userRatingsProduct = allRatings.reduce((acc, rating) => {
+    const { userId, userRating } = rating;
+    if (!acc[userId]) {
+      acc[userId] = 1;
+    }
+    acc[userId] *= userRating;
+    return acc;
+  }, {});
+
+  const totalProduct = Object.values(userRatingsProduct).reduce((total, product) => total + product, 0);
+
+  const magnitudeA = Math.sqrt(commonRatingsA.reduce((acc, rating) => acc + rating.userRating ** 2, 0));
+  const magnitudeB = Math.sqrt(commonRatingsB.reduce((acc, rating) => acc + rating.userRating ** 2, 0));
 
   if (magnitudeA === 0 || magnitudeB === 0) {
     return 0;
   } else {
-    return dotProduct / (magnitudeA * magnitudeB);
+    return totalProduct / (magnitudeA * magnitudeB);
   }
 };
 
@@ -37,7 +52,7 @@ module.exports = {
       return denominator === 0 ? 0 : numerator / denominator;
     } catch (error) {
       console.error("Error in calculating predicted rating:", error);
-      throw error; // Rethrow the error to propagate it upwards
+      throw error;
     }
   },
 };
