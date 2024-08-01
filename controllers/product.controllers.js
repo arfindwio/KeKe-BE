@@ -176,6 +176,9 @@ module.exports = {
             },
           },
           image: {
+            orderBy: {
+              id: "asc",
+            },
             select: {
               id: true,
               image: true,
@@ -328,7 +331,12 @@ module.exports = {
           : { isDeleted: false },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
-          image: { select: { image: true } },
+          image: {
+            orderBy: {
+              id: "asc",
+            },
+            select: { image: true },
+          },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -347,7 +355,12 @@ module.exports = {
         },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
-          image: { select: { image: true } },
+          image: {
+            orderBy: {
+              id: "asc",
+            },
+            select: { image: true },
+          },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -371,7 +384,12 @@ module.exports = {
       const products = await prisma.product.findMany({
         where: { isDeleted: false },
         include: {
-          image: { select: { image: true } },
+          image: {
+            orderBy: {
+              id: "asc",
+            },
+            select: { image: true },
+          },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -413,7 +431,12 @@ module.exports = {
         },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
-          image: { select: { image: true } },
+          image: {
+            orderBy: {
+              id: "asc",
+            },
+            select: { image: true },
+          },
           category: { select: { categoryName: true } },
           review: { select: { userRating: true } },
           promotion: { select: { discount: true } },
@@ -451,6 +474,9 @@ module.exports = {
           soldCount: true,
           stock: true,
           image: {
+            orderBy: {
+              id: "asc",
+            },
             select: {
               image: true,
             },
