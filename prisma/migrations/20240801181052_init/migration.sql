@@ -90,6 +90,7 @@ CREATE TABLE "Product" (
 CREATE TABLE "Image" (
     "id" SERIAL NOT NULL,
     "image" TEXT NOT NULL,
+    "fileId" TEXT NOT NULL,
     "createdAt" TEXT NOT NULL,
     "updatedAt" TEXT NOT NULL,
     "categoryId" INTEGER,
