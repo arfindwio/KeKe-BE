@@ -50,6 +50,9 @@ module.exports = {
             },
           },
           image: {
+            orderBy: {
+              id: "asc",
+            },
             select: {
               id: true,
               image: true,
