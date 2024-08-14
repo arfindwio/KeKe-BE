@@ -2,6 +2,7 @@ const router = require("express").Router();
 const swaggerUi = require("swagger-ui-express");
 
 const swaggerDocument = require("../docs/swagger.json");
+
 const User = require("./user.routes");
 const UserProfile = require("./userProfile.routes");
 const Notification = require("./notification.routes");
@@ -18,8 +19,7 @@ const Discussion = require("./discussion.routes");
 const Reply = require("./reply.routes");
 
 // API Docs
-router.use("/api-docs", swaggerUi.serve);
-router.get("/api-docs", swaggerUi.setup(swaggerDocument));
+router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API
 router.use("/api/v1/users", User);

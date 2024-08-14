@@ -105,6 +105,9 @@ module.exports = {
                   productName: true,
                   price: true,
                   image: {
+                    orderBy: {
+                      id: "asc",
+                    },
                     select: {
                       image: true,
                     },
@@ -288,7 +291,7 @@ module.exports = {
       let newPayment = await prisma.payment.create({
         data: {
           amount: Number(Math.floor(0.11 * totalPrice + totalPrice)),
-          paymentStatus: "Paid",
+          paymentStatus: "Unpaid",
           methodPayment,
           paymentCode: paymentCodeOrder,
           userId: Number(req.user.id),
@@ -299,41 +302,12 @@ module.exports = {
 
       let transaction = await core.charge(parameter);
 
-      const html = await nodemailer.getHtml("transaction-success.ejs", {
-        methodPayment,
-      });
-      nodemailer.sendEmail(user.email, "Email Transaction", html);
-
-      await prisma.notification.create({
-        data: {
-          title: "Notification",
-          message: "You have successfully payment Keke Apparel",
-          userId: Number(req.user.id),
-          createdAt: formattedDate(new Date()),
-          updatedAt: formattedDate(new Date()),
-        },
-      });
-
       await prisma.cart.updateMany({
         where: { userId: Number(req.user.id), paymentId: null },
         data: {
           paymentId: newPayment.id,
         },
       });
-
-      await Promise.all(
-        carts.map(async (cart) => {
-          const { productId, quantity } = cart;
-          await prisma.product.update({
-            where: { id: Number(productId) },
-            data: {
-              soldCount: {
-                increment: Number(quantity),
-              },
-            },
-          });
-        })
-      );
 
       res.status(201).json({
         status: true,
@@ -373,6 +347,81 @@ module.exports = {
         data: {
           editedPayment,
         },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
+  postPaymentNotification: catchAsync(async (req, res, next) => {
+    try {
+      const { order_id, transaction_status, fraud_status } = req.body;
+
+      const payment = await prisma.payment.findFirst({
+        where: { paymentCode: order_id },
+      });
+
+      if (!payment) throw new CustomError(404, "Payment not found");
+
+      let paymentStatus;
+      if (transaction_status === "capture" || transaction_status === "settlement") {
+        paymentStatus = fraud_status === "accept" ? "Paid" : "Failed";
+      } else if (transaction_status === "cancel" || transaction_status === "deny") {
+        paymentStatus = "Failed";
+      } else if (transaction_status === "expire") {
+        paymentStatus = "Expired";
+      } else {
+        paymentStatus = "Failed";
+      }
+
+      await prisma.payment.update({
+        where: { id: Number(payment.id) },
+        data: { paymentStatus },
+      });
+
+      const html = await nodemailer.getHtml("transaction-success.ejs", {
+        methodPayment,
+      });
+      nodemailer.sendEmail(user.email, "Email Transaction", html);
+
+      await prisma.notification.create({
+        data: {
+          title: "Notification",
+          message: "You have successfully payment Keke Apparel",
+          userId: Number(payment.userId),
+          createdAt: formattedDate(new Date()),
+          updatedAt: formattedDate(new Date()),
+        },
+      });
+
+      const carts = await prisma.cart.findMany({
+        where: { userId: Number(req.user.id), paymentId: Number(payment.id) },
+        include: {
+          product: {
+            select: {
+              price: true,
+            },
+          },
+        },
+      });
+
+      await Promise.all(
+        carts.map(async (cart) => {
+          const { productId, quantity } = cart;
+          await prisma.product.update({
+            where: { id: Number(productId) },
+            data: {
+              soldCount: {
+                increment: Number(quantity),
+              },
+            },
+          });
+        })
+      );
+
+      res.status(200).json({
+        status: true,
+        message: "Payment successfully",
       });
     } catch (err) {
       next(err);
