@@ -10,11 +10,11 @@ module.exports = {
         where: { userId: Number(req.user.id), paymentId: null },
         orderBy: { id: "asc" },
         include: {
-          // promotion: {
-          //   select: {
-          //     discount: true,
-          //   },
-          // },
+          promotion: {
+            select: {
+              discount: true,
+            },
+          },
           product: {
             select: {
               productName: true,
@@ -26,6 +26,9 @@ module.exports = {
                 },
               },
               image: {
+                orderBy: {
+                  id: "asc",
+                },
                 select: {
                   image: true,
                 },
