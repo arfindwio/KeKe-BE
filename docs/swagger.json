@@ -5364,7 +5364,7 @@
         ],
         "parameters": [
           {
-            "name": "search",
+            "name": "query",
             "in": "query",
             "description": "Used to specify a particular search when retrieving payments data",
             "schema": {
