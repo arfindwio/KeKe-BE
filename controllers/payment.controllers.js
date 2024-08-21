@@ -25,16 +25,22 @@ let core = new midtransClient.CoreApi({
 module.exports = {
   getAllPayments: catchAsync(async (req, res, next) => {
     try {
-      const { search, page = 1, limit = 10 } = req.query;
+      const { query, page = 1, limit = 10 } = req.query;
 
-      const payments = await prisma.payment.findMany({
-        skip: (Number(page) - 1) * Number(limit),
-        take: Number(limit),
-        where: search ? { cart: { product: { productName: { contains: search, mode: "insensitive" } } } } : {},
+      const allPayments = await prisma.payment.findMany({
+        where: query
+          ? {
+              createdAt: {
+                contains: query,
+                mode: "insensitive",
+              },
+            }
+          : {},
         include: {
           cart: {
             select: {
               note: true,
+              quantity: true,
               size: {
                 select: {
                   sizeName: true,
@@ -48,6 +54,7 @@ module.exports = {
               product: {
                 select: {
                   productName: true,
+                  price: true,
                 },
               },
             },
@@ -65,16 +72,46 @@ module.exports = {
         },
       });
 
-      const totalPayments = await prisma.payment.count({
-        where: search ? { cart: { product: { productName: { contains: search, mode: "insensitive" } } } } : {},
+      // Process payments
+      const transactions = {
+        paid: { quantity: 0, total: 0 },
+        unpaid: { quantity: 0, total: 0 },
+        expired: { quantity: 0, total: 0 },
+      };
+
+      allPayments.forEach((payment) => {
+        const paymentStatus = payment.paymentStatus.toLowerCase();
+
+        // Process each cart item within the payment
+        payment.cart.forEach((cartItem) => {
+          const quantity = cartItem.quantity;
+          const total = quantity * cartItem.product.price;
+
+          if (paymentStatus === "paid") {
+            transactions.paid.quantity += quantity;
+            transactions.paid.total += total;
+          } else if (paymentStatus === "unpaid") {
+            transactions.unpaid.quantity += quantity;
+            transactions.unpaid.total += total;
+          } else {
+            transactions.expired.quantity += quantity;
+            transactions.expired.total += total;
+          }
+        });
       });
+
+      // Pagination calculations
+      const totalPayments = allPayments.length;
+      const startIndex = (Number(page) - 1) * Number(limit);
+      const endIndex = startIndex + Number(limit);
+      const paginatedPayments = allPayments.slice(startIndex, endIndex);
 
       const pagination = getPagination(req, totalPayments, Number(page), Number(limit));
 
       res.status(200).json({
         status: true,
-        message: "Get all payment successful",
-        data: { pagination, payments },
+        message: "Get all payments successful",
+        data: { pagination, transactions, payments: paginatedPayments },
       });
     } catch (err) {
       next(err);
