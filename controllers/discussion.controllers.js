@@ -202,7 +202,7 @@ module.exports = {
 
       if (req.user.role === "User") {
         const users = await prisma.user.findMany({
-          where: { role: "Admin" },
+          where: { OR: [{ role: "Admin" }, { role: "Owner" }] },
         });
 
         const notifications = users.map((user) => {
@@ -248,7 +248,7 @@ module.exports = {
 
       if (!discussion) throw new CustomError(404, "discussion Not Found");
 
-      if (req.user.role !== "Admin" && discussion.userId !== userId) throw new CustomError(403, "This is not your discussion chat");
+      if ((req.user.role !== "Owner" || req.user.role !== "Admin") && discussion.userId !== userId) throw new CustomError(403, "This is not your discussion chat");
 
       // if (discussion.reply) {
       //   await prisma.reply.deleteMany({

@@ -2,5 +2,8 @@
   "version": 2,
   "name": "KeKe-Backend-Project",
   "builds": [{ "src": "app.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/app.js" }]
+  "routes": [
+    { "src": "/api-docs", "dest": "/docs/swagger.json" },
+    { "src": "/(.*)", "dest": "/app.js" }
+  ]
 }

@@ -466,7 +466,7 @@ module.exports = {
       // Validation: Check if the user with the given userId exists
       if (!user) throw new CustomError(404, "User not found");
 
-      if (user.role === "admin") throw new CustomError(403, "Admins are not allowed to be deleted");
+      if (user.role !== "Owner") throw new CustomError(403, "You do not have the required permissions to delete this user");
 
       await prisma.userProfile.delete({
         where: { userId: Number(user.id) },
@@ -480,6 +480,40 @@ module.exports = {
         status: true,
         message: "Delete User by Id successful",
         data: { deletedUser },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }),
+
+  ChangeRoleUserById: catchAsync(async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const { role } = req.body;
+
+      // Validation: Check if the userId is a valid number
+      if (isNaN(userId)) throw new CustomError(400, "Invalid userId");
+
+      const user = await prisma.user.findUnique({
+        where: { id: Number(userId) },
+      });
+
+      // Validation: Check if the user with the given userId exists
+      if (!user) throw new CustomError(404, "User not found");
+
+      if (user.role !== "Owner") throw new CustomError(403, "You do not have permission to change this user's role.");
+
+      const updatedUser = await prisma.user.update({
+        where: { id: Number(user.id) },
+        data: {
+          role,
+        },
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: "Change Role User by Id successful",
+        data: { updatedUser },
       });
     } catch (err) {
       next(err);
