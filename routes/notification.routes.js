@@ -3,8 +3,8 @@ const { getAllNotifications, createNotification, markNotificationsAsRead } = req
 const Auth = require("../middlewares/authentication");
 const checkRole = require("../middlewares/checkRole");
 
-router.get("/", Auth, checkRole(["User", "Admin"]), getAllNotifications);
-router.post("/", Auth, checkRole(["Admin"]), createNotification);
-router.put("/markAsRead", Auth, checkRole(["User", "Admin"]), markNotificationsAsRead);
+router.get("/", Auth, checkRole(["Owner", "Admin", "User"]), getAllNotifications);
+router.post("/", Auth, checkRole(["Owner", "Admin"]), createNotification);
+router.put("/markAsRead", Auth, checkRole(["Owner", "Admin", "User"]), markNotificationsAsRead);
 
 module.exports = router;

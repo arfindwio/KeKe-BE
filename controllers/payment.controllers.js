@@ -36,6 +36,9 @@ module.exports = {
               },
             }
           : {},
+        orderBy: {
+          id: "desc",
+        },
         include: {
           cart: {
             select: {
@@ -79,25 +82,23 @@ module.exports = {
         expired: { quantity: 0, total: 0 },
       };
 
+      const updateTransaction = (status, quantity, amount) => {
+        if (status === "paid") {
+          transactions.paid.quantity += quantity;
+          transactions.paid.total += amount;
+        } else if (status === "unpaid") {
+          transactions.unpaid.quantity += quantity;
+          transactions.unpaid.total += amount;
+        } else {
+          transactions.expired.quantity += quantity;
+          transactions.expired.total += amount;
+        }
+      };
+
       allPayments.forEach((payment) => {
         const paymentStatus = payment.paymentStatus.toLowerCase();
-
-        // Process each cart item within the payment
-        payment.cart.forEach((cartItem) => {
-          const quantity = cartItem.quantity;
-          const total = quantity * cartItem.product.price;
-
-          if (paymentStatus === "paid") {
-            transactions.paid.quantity += quantity;
-            transactions.paid.total += total;
-          } else if (paymentStatus === "unpaid") {
-            transactions.unpaid.quantity += quantity;
-            transactions.unpaid.total += total;
-          } else {
-            transactions.expired.quantity += quantity;
-            transactions.expired.total += total;
-          }
-        });
+        const totalQuantity = payment.cart.reduce((acc, item) => acc + item.quantity, 0);
+        updateTransaction(paymentStatus, totalQuantity, payment.amount);
       });
 
       // Pagination calculations
@@ -369,6 +370,8 @@ module.exports = {
       });
 
       if (!payment) throw new CustomError(404, "payment Not Found");
+
+      if (payment.paymentStatus !== "Paid") throw new CustomError(400, "Tracking number cannot be edited because the payment status is not 'Paid'");
 
       const editedPayment = await prisma.payment.update({
         where: { id: Number(payment.id) },

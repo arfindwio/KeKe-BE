@@ -48,7 +48,7 @@ module.exports = {
 
       if (!reply) throw new CustomError(404, "Reply not found");
 
-      if (req.user.role !== "Admin" && reply.userId !== userId) throw new CustomError(403, "This is not your reply chat");
+      if ((req.user.role !== "Owner" || req.user.role !== "Admin") && reply.userId !== userId) throw new CustomError(403, "This is not your reply chat");
 
       const deletedReply = await prisma.reply.update({
         where: {

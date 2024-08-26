@@ -8,7 +8,7 @@ const { calculatePredictedRating } = require("../utils/collaborativeFiltering");
 module.exports = {
   getAllProducts: catchAsync(async (req, res, next) => {
     try {
-      const { search, f, c, page = 1, limit = 10 } = req.query;
+      const { search, f, c, page = 1, limit = 12 } = req.query;
 
       let productsQuery = {
         where: { isDeleted: false },
@@ -23,8 +23,8 @@ module.exports = {
         if (f.includes("newest")) {
           productsQuery.orderBy.unshift({ id: "asc" });
         }
-        if (f.includes("populer")) {
-          productsQuery.orderBy.unshift({ review: { _count: "desc" } }, { soldCount: "desc" });
+        if (f.includes("popular")) {
+          productsQuery.orderBy.push({ soldCount: "desc" }, { review: { _count: "desc" } });
         }
         if (f.includes("promo")) {
           productsQuery.where.promotionId = { not: null };
