@@ -440,7 +440,17 @@ module.exports = {
 
   getAllUsers: catchAsync(async (req, res, next) => {
     try {
-      const users = await prisma.user.findMany();
+      const users = await prisma.user.findMany({
+        include: {
+          userProfile: {
+            select: {
+              fullName: true,
+              phoneNumber: true,
+              address: true,
+            },
+          },
+        },
+      });
 
       return res.status(200).json({
         status: true,
@@ -501,7 +511,7 @@ module.exports = {
       // Validation: Check if the user with the given userId exists
       if (!user) throw new CustomError(404, "User not found");
 
-      if (user.role !== "Owner") throw new CustomError(403, "You do not have permission to change this user's role.");
+      if (user.role === "Owner") throw new CustomError(403, "You do not have permission to change this user's role.");
 
       const updatedUser = await prisma.user.update({
         where: { id: Number(user.id) },
