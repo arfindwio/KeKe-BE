@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const swaggerUi = require("swagger-ui-express");
-
-const swaggerDocument = require("../docs/swagger.json");
+const YAML = require("yaml");
+const fs = require("fs");
+const path = require("path");
 
 const User = require("./user.routes");
 const UserProfile = require("./userProfile.routes");
@@ -19,9 +20,13 @@ const Review = require("./review.routes");
 const Discussion = require("./discussion.routes");
 const Reply = require("./reply.routes");
 
-// API Docs
+const swagger_path = path.resolve(__dirname, "../docs/swagger.yaml");
 const customCssUrl = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css";
 const customJs = ["https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js", "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js"];
+const file = fs.readFileSync(swagger_path, "utf8");
+
+// API Docs
+const swaggerDocument = YAML.parse(file);
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, { customCssUrl, customJs }));
 
 // API

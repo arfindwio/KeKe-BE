@@ -1,0 +1,5060 @@
+openapi: 3.0.3
+info:
+  title: Online Store
+  description: Online Store
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/v1
+tags:
+  - name: Users
+    description: Operations about User
+  - name: UserProfiles
+    description: Operations about UserProfile
+  - name: Notifications
+    description: Operations about Notification
+  - name: Categories
+    description: Operations about Category
+  - name: Promotions
+    description: Operations about Promotion
+  - name: Products
+    description: Operations about Product
+  - name: Sizes
+    description: Operations about Size
+  - name: Colors
+    description: Operations about Color
+  - name: Carts
+    description: Operations about Cart
+  - name: Payments
+    description: Operations about Payment
+  - name: Reviews
+    description: Operations about Review
+  - name: Discussions
+    description: Operations about Discussion
+  - name: Replies
+    description: Operations about Reply
+paths:
+  /users/register:
+    post:
+      tags:
+        - Users
+      operationId: post-register-user
+      summary: Register user
+      description: Register user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/Register"
+      responses:
+        "201":
+          description: User registration was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newUser:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/login:
+    post:
+      tags:
+        - Users
+      operationId: post-login-user
+      summary: Login user
+      description: Login user with the provided information.
+      requestBody:
+        $ref: "#/components/requestBodies/Login"
+      responses:
+        "200":
+          description: User Login was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+                          token:
+                            type: string
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk4Njk0MzI1fQ.mexfgD-aW24iYvoWYWQJWSv7AbJ5EqyIDrHS6iCk-d0
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/verify-otp:
+    put:
+      tags:
+        - Users
+      operationId: put-verify-otp-user
+      summary: Verify otp user
+      description: Verify otp user
+      requestBody:
+        $ref: "#/components/requestBodies/VerifyOtp"
+      responses:
+        "200":
+          description: Verify otp user was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          updatedUser:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              isVerified:
+                                type: boolean
+                                example: true
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/resend-otp:
+    put:
+      tags:
+        - Users
+      operationId: put-resend-otp-user
+      summary: Resend otp user
+      description: Resend otp user
+      requestBody:
+        $ref: "#/components/requestBodies/ResendOtp"
+      responses:
+        "200":
+          description: Resend otp user was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          updateOtp:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/forget-password:
+    post:
+      tags:
+        - Users
+      operationId: post-forget-password-user
+      summary: Forget Password user
+      description: Forget Password user
+      requestBody:
+        $ref: "#/components/requestBodies/ForgetPassword"
+      responses:
+        "200":
+          description: Email sent successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                            example: budi@mail.com
+                          token:
+                            type: string
+                            example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/update-password:
+    put:
+      tags:
+        - Users
+      operationId: put-update-password-user
+      summary: Update password user
+      description: Update password user
+      parameters:
+        - name: token
+          in: query
+          description: token for update password
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/UpdatePassword"
+      responses:
+        "200":
+          description: Email sent successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          updatedUser:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/authenticate:
+    get:
+      tags:
+        - Users
+      operationId: get-user-by-authenticate
+      summary: Get user by authenticate
+      description: Get user by authenticate
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+                          userProfile:
+                            type: object
+                            properties:
+                              profilePicture:
+                                type: string
+                                example: https://ik.imagekit.io/budi123/1628693262177_a8Y3AhxNv.png
+                              fullName:
+                                type: string
+                                example: Budi Cahyono
+                              city:
+                                type: string
+                                example: Vancouver
+                              country:
+                                type: string
+                                example: Canada
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/change-password:
+    put:
+      tags:
+        - Users
+      operationId: put-change-password-user-by-authenticate
+      summary: Put Change Password User By Authenticate
+      description: Put Change Password User By Authenticate
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/ChangePassword"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          updatedUser:
+                            type: object
+                            properties:
+                              email:
+                                type: string
+                                example: budi@mail.com
+                              password:
+                                type: string
+                                example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /users/google:
+    get:
+      tags:
+        - Users
+      operationId: get-login-user-with-google
+      summary: Initiate Google OAuth 2.0 Authentication
+      description: Redirects the user to Google for authentication.
+      security:
+        - google_oauth: []
+      responses:
+        "302":
+          description: Redirect to Google for authentication.
+  /users/google/callback:
+    get:
+      tags:
+        - Users
+      operationId: get-login-user-with-google-callback
+      summary: Google OAuth 2.0 Callback
+      description: Handles the callback after successful Google authentication.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          description: Authorization code received from Google.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      err:
+                        type: string
+                        example: null
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            allOf:
+                              - type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  email:
+                                    type: string
+                                    example: budi@gmail.com
+                                  password:
+                                    type: string
+                                    example: null
+                                  otp:
+                                    type: string
+                                    example: null
+                                  otpCreatedAt:
+                                    type: string
+                                    example: null
+                                  isVerified:
+                                    type: boolean
+                                    example: true
+                                  role:
+                                    type: string
+                                    example: user
+                                  resetPasswordToken:
+                                    type: string
+                                    example: null
+                                  googleId:
+                                    type: string
+                                    example: "0123456789"
+                          token:
+                            type: string
+                            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk4Njk0MzI1fQ.mexfgD-aW24iYvoWYWQJWSv7AbJ5EqyIDrHS6iCk-d0
+  /users:
+    get:
+      tags:
+        - Users
+      operationId: get-all-users
+      summary: Get all users
+      description: Get all users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          users:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                email:
+                                  type: string
+                                  example: budi@mail.com
+                                password:
+                                  type: string
+                                  example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+                                createdAt:
+                                  type: string
+                                  example: 15 Februari 2024
+                                updatedAt:
+                                  type: string
+                                  example: 15 Februari 2024
+  /users/{userId}:
+    delete:
+      tags:
+        - Users
+      operationId: delete-user-by-id
+      summary: Delete user by id
+      description: Delete user by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the user to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedUser:
+                            $ref: "#/components/schemas/UserModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /user-profiles/update-profile:
+    put:
+      tags:
+        - UserProfiles
+      operationId: put-edit-user-by-authenticate
+      summary: Put Edit User By Authenticate
+      description: Put Edit User By Authenticate
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateProfile"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newUserProfile:
+                            type: object
+                            properties:
+                              profilePicture:
+                                type: string
+                                example: https://ik.imagekit.io/budi123/1628693262177_a8Y3AhxNv.png
+                              fullName:
+                                type: string
+                                example: Budi Cahyono
+                              address:
+                                type: string
+                                example: 123 Main Street, Apt 2B, New York, NY 10001
+                              city:
+                                type: string
+                                example: Vancouver
+                              country:
+                                type: string
+                                example: Canada
+                              createdAt:
+                                type: string
+                                example: 15 Februari 2024
+                              updatedAt:
+                                type: string
+                                example: 15 Februari 2024
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /notifications:
+    get:
+      tags:
+        - Notifications
+      operationId: get-all-notifications-by-authentication
+      summary: Get all notifications by authentication
+      description: Get all notifications by authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          notifications:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: string
+                                  example: Notification
+                                message:
+                                  type: string
+                                  example: Password Successfully changed
+                                isRead:
+                                  type: boolean
+                                  example: true
+                                createdAt:
+                                  type: string
+                                  example: 15 Februari 2024
+                                updatedAt:
+                                  type: string
+                                  example: 15 Februari 2024
+    post:
+      tags:
+        - Notifications
+      operationId: post-create-notification-for-all-users
+      summary: Create notification for all users
+      description: Create notification with the provided information.
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreateNotification"
+      responses:
+        "201":
+          description: Create notification was successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newNotification:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                user:
+                                  type: object
+                                  properties:
+                                    userProfile:
+                                      type: object
+                                      properties:
+                                        fullName:
+                                          type: string
+                                          example: Budi Cahyono
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /notifications/markAsRead:
+    put:
+      tags:
+        - Notifications
+      operationId: put-notifications-by-authentication
+      summary: Put notifications by authentication
+      description: Put notifications by authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          notifications:
+                            type: object
+                            properties:
+                              count:
+                                type: integer
+                                example: 10
+  /categories:
+    get:
+      tags:
+        - Categories
+      operationId: get-all-categories
+      summary: Get all categories
+      description: Get all categories
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving categories data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving categories data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of categories to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          categories:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/CategoryModel"
+    post:
+      tags:
+        - Categories
+      operationId: create-Category
+      summary: Create Category
+      description: Create Category
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreateCategory"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newCategory:
+                            allOf:
+                              - $ref: "#/components/schemas/CategoryModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /categories/{categoryId}:
+    put:
+      tags:
+        - Categories
+      operationId: edit-category-by-id
+      summary: Edit category by id
+      description: Edit category by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the category to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateCategory"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          editedCategory:
+                            $ref: "#/components/schemas/CategoryModel"
+    delete:
+      tags:
+        - Categories
+      operationId: delete-category-by-id
+      summary: Delete category by id
+      description: Delete category by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the category to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedCategory:
+                            $ref: "#/components/schemas/CategoryModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /promotions:
+    get:
+      tags:
+        - Promotions
+      operationId: get-all-promotions
+      summary: Get all promotions
+      description: Get all promotions
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving promotions data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving promotions data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of promotions to be returned in a single request.
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          promotions:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/PromotionModel"
+    post:
+      tags:
+        - Promotions
+      operationId: create-promotion
+      summary: Create promotion
+      description: Create promotion
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreatePromotion"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newPromotion:
+                            allOf:
+                              - $ref: "#/components/schemas/PromotionModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /promotions/{promotionId}:
+    put:
+      tags:
+        - Promotions
+      operationId: edit-promotion-by-id
+      summary: Edit promotion by id
+      description: Edit promotion by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: promotionId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the promotion to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/CreatePromotion"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          editedPromotion:
+                            $ref: "#/components/schemas/PromotionModel"
+    delete:
+      tags:
+        - Promotions
+      operationId: delete-promotion-by-id
+      summary: Delete promotion by id
+      description: Delete promotion by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: promotionId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the promotion to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedPromotion:
+                            $ref: "#/components/schemas/PromotionModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /products:
+    get:
+      tags:
+        - Products
+      operationId: get-all-products
+      summary: Get all products
+      description: Get all products
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving products data
+          schema:
+            type: string
+        - name: f
+          in: query
+          description: Used to specify a particular filter when retrieving product data
+          schema:
+            type: string
+        - name: c
+          in: query
+          description: Used to specify a particular category when retrieving product data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving products data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of products to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          products:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ProductModel"
+    post:
+      tags:
+        - Products
+      operationId: create-product
+      summary: Create product
+      description: Create product
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreateProduct"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newProduct:
+                            allOf:
+                              - $ref: "#/components/schemas/ProductModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /products/{productId}:
+    get:
+      tags:
+        - Products
+      operationId: get-product-by-id
+      summary: get product by id
+      description: get product by id
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          product:
+                            $ref: "#/components/schemas/ProductModel"
+    put:
+      tags:
+        - Products
+      operationId: edit-product-by-id
+      summary: Edit product by id
+      description: Edit product by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/EditProduct"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          editedProduct:
+                            $ref: "#/components/schemas/ProductModel"
+    delete:
+      tags:
+        - Products
+      operationId: delete-product-by-id
+      summary: Delete product by id
+      description: Delete product by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedProduct:
+                            $ref: "#/components/schemas/ProductModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /products/featured/recommendation:
+    get:
+      tags:
+        - Products
+      operationId: get-all-products-recommendation
+      summary: Get all products recommendation
+      description: Get all products recommendation
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving products data
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          products:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ProductModel"
+  /products/featured/recommendation-user:
+    get:
+      tags:
+        - Products
+      operationId: get-all-products-recommendation-user
+      summary: Get all products recommendation user
+      description: Get all products recommendation user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving products data
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          products:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ProductModel"
+  /products/featured/specialOffer:
+    get:
+      tags:
+        - Products
+      operationId: get-product-special-offer
+      summary: Get all products special offer
+      description: Get all products special offer
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          product:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ProductModel"
+  /sizes:
+    get:
+      tags:
+        - Sizes
+      operationId: get-all-sizes
+      summary: Get all sizes
+      description: Get all sizes
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving sizes data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving sizes data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of sizes to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          sizes:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/SizeModel"
+    post:
+      tags:
+        - Sizes
+      operationId: create-size
+      summary: Create size
+      description: Create size
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreateSize"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newSize:
+                            allOf:
+                              - $ref: "#/components/schemas/SizeModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /sizes/{productId}:
+    get:
+      tags:
+        - Sizes
+      operationId: get-all-sizes-by-product-id
+      summary: Get all sizes by product id
+      description: Get all sizes by product id
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          sizes:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/SizeModel"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /sizes/{sizeId}:
+    put:
+      tags:
+        - Sizes
+      operationId: edit-size-by-id
+      summary: Edit size by id
+      description: Edit size by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: sizeId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the size to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/EditSize"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          editedSize:
+                            $ref: "#/components/schemas/SizeModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+    delete:
+      tags:
+        - Sizes
+      operationId: delete-size-by-id
+      summary: Delete size by id
+      description: Delete size by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: sizeId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the size to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedSize:
+                            $ref: "#/components/schemas/SizeModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /colors:
+    get:
+      tags:
+        - Colors
+      operationId: get-all-colors
+      summary: Get all colors
+      description: Get all colors
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving colors data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving colors data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of colors to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          colors:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ColorModel"
+    post:
+      tags:
+        - Colors
+      operationId: create-color
+      summary: Create color
+      description: Create color
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreateColor"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newColor:
+                            allOf:
+                              - $ref: "#/components/schemas/ColorModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /colors/{productId}:
+    get:
+      tags:
+        - Colors
+      operationId: get-all-colors-by-product-id
+      summary: Get all colors by product id
+      description: Get all colors by product id
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          colors:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ColorModel"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /colors/{colorId}:
+    put:
+      tags:
+        - Colors
+      operationId: edit-color-by-id
+      summary: Edit color by id
+      description: Edit color by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: colorId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the color to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/EditColor"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          editedColor:
+                            $ref: "#/components/schemas/ColorModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+    delete:
+      tags:
+        - Colors
+      operationId: delete-color-by-id
+      summary: Delete color by id
+      description: Delete color by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: colorId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the color to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedColor:
+                            $ref: "#/components/schemas/ColorModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /carts:
+    get:
+      tags:
+        - Carts
+      operationId: get-all-carts-by-auth
+      summary: Get all carts by auth
+      description: Get all carts by auth
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          carts:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/CartModel"
+  /carts/{productId}:
+    post:
+      tags:
+        - Carts
+      operationId: create-cart-by-product-id
+      summary: create cart by product id
+      description: create cart by product id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateCart"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newCart:
+                            $ref: "#/components/schemas/CartModel"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /carts/{cartId}:
+    put:
+      tags:
+        - Carts
+      operationId: edit-cart-by-id
+      summary: Edit cart by id
+      description: Edit cart by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the cart to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/EditCart"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          editedCart:
+                            $ref: "#/components/schemas/CartModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+    delete:
+      tags:
+        - Carts
+      operationId: delete-cart-by-id
+      summary: Delete cart by id
+      description: Delete cart by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: cartId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the cart to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedCart:
+                            $ref: "#/components/schemas/CartModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /payments:
+    get:
+      tags:
+        - Payments
+      operationId: get-all-payments
+      summary: Get all payments
+      description: Get all payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: query
+          in: query
+          description: Used to specify a particular search when retrieving payments data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving payments data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of payments to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          payments:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/PaymentModel"
+    post:
+      tags:
+        - Payments
+      operationId: create-payment
+      summary: Create payment
+      description: Create payment
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreatePayment"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newPayment:
+                            allOf:
+                              - $ref: "#/components/schemas/PaymentModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /payments/{paymentId}:
+    put:
+      tags:
+        - Payments
+      operationId: edit-payment-by-id
+      summary: Edit payment by Id
+      description: Edit payment by Id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: paymentId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the payment to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/EditPayment"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newPayment:
+                            allOf:
+                              - $ref: "#/components/schemas/PaymentModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /payments/history:
+    get:
+      tags:
+        - Payments
+      operationId: get-all-payments
+      summary: Get all payments
+      description: Get all payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          description: Used to specify a particular search when retrieving payments data
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving payments data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of payments to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          payments:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/PaymentModel"
+  /reviews/{productId}:
+    get:
+      tags:
+        - Reviews
+      operationId: get-reviews-by-product-id
+      summary: get reviews by product Id
+      description: get reviews by product Id
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving products data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of products to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          reviews:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/ReviewModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+    post:
+      tags:
+        - Reviews
+      operationId: create-review-by-product-id
+      summary: create review by product Id
+      description: create review by product Id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateReview"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newReview:
+                            allOf:
+                              - $ref: "#/components/schemas/ReviewModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /discussions/{productId}:
+    get:
+      tags:
+        - Discussions
+      operationId: get-discussions-by-product-id
+      summary: get discussions by product Id
+      description: get discussions by product Id
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+        - name: page
+          in: query
+          description: Used to specify a particular page when retrieving products data
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Determines the limit of the number of products to be returned in a single request.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          pagination:
+                            allOf:
+                              - $ref: "#/components/schemas/Pagination"
+                          discussions:
+                            type: array
+                            items:
+                              allOf:
+                                - $ref: "#/components/schemas/DiscussionModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+    post:
+      tags:
+        - Discussions
+      operationId: create-discussion-by-product-id
+      summary: create discussion by product Id
+      description: create discussion by product Id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the product to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateDiscussion"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newDiscussion:
+                            allOf:
+                              - $ref: "#/components/schemas/DiscussionModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /discussions/{discussionId}:
+    delete:
+      tags:
+        - Discussions
+      operationId: delete-discussion-by-id
+      summary: delete discussion by Id
+      description: delete discussion by Id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: discussionId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the discussion to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedDiscussion:
+                            allOf:
+                              - $ref: "#/components/schemas/DiscussionModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /replies/{discussionId}:
+    post:
+      tags:
+        - Replies
+      operationId: create-reply-by-discussion-id
+      summary: create reply by discussion Id
+      description: create reply by discussion Id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: discussionId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the discussion to retrieve.
+      requestBody:
+        $ref: "#/components/requestBodies/CreateReply"
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          newReply:
+                            allOf:
+                              - $ref: "#/components/schemas/ReplyModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+  /replies/{replyId}:
+    delete:
+      tags:
+        - Replies
+      operationId: delete-reply-by-id
+      summary: delete reply by id
+      description: delete reply by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: replyId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the reply to retrieve.
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/BasicResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          deletedReply:
+                            allOf:
+                              - $ref: "#/components/schemas/ReplyModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: failed
+components:
+  schemas:
+    BasicResponse:
+      title: BasicResponse
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: success
+    Pagination:
+      title: Pagination
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            next:
+              type: string
+              example: https://domain.com/items?page=3&limit=10
+            prev:
+              type: string
+              example: https://domain.com/items?page=1&limit=10
+        total_items:
+          type: integer
+          example: 10
+    UserModel:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: budi@mail.com
+        password:
+          type: string
+          example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+        otp:
+          type: string
+          example: "012345"
+        otpCreatedAt:
+          type: string
+          example: "2023-12-04T03:09:21.254Z"
+        isVerified:
+          type: boolean
+          example: false
+        role:
+          type: string
+          example: user
+        resetPasswordToken:
+          type: string
+          example: $2b$10$wpqr1W8aUNCN7BZZ3o6sz.meX9rB/aItp5Mw/0q7GaRmJbsU2GGbK
+        googleId:
+          type: string
+          example: null
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+    UserProfileModel:
+      title: User Profile
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        profilePicture:
+          type: string
+          example: https://ik.imagekit.io/budi123/1628693262177_a8Y3AhxNv.png
+        fullName:
+          type: string
+          example: Budi Cahyono
+        address:
+          type: string
+          example: 123 Main Street, Apt 2B, New York, NY 10001
+        phoneNumber:
+          type: string
+          example: "08123456789"
+        city:
+          type: string
+          example: Vancouver
+        country:
+          type: string
+          example: Canada
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        userId:
+          type: integer
+          example: 1
+    NotificationModel:
+      title: Notification
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Notification
+        message:
+          type: string
+          example: Password successfully updated!
+        isRead:
+          type: boolean
+          example: false
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        userId:
+          type: integer
+          example: 1
+    CategoryModel:
+      title: Category
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        categoryImage:
+          type: string
+          example: https://ik.imagekit.io/budi123/1628693262177_a8Y3AhxNv.png
+        categoryName:
+          type: string
+          example: Shirt
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+    PromotionModel:
+      title: Promotion
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        discount:
+          type: number
+          format: float
+          example: 0.1
+        startDate:
+          type: string
+          example: 15 Februari 2024
+        endDate:
+          type: string
+          example: 15 Februari 2024
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+    ProductModel:
+      title: Product
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        productImage:
+          type: string
+          example: https://ik.imagekit.io/budi123/1628693262177_a8Y3AhxNv.png
+        productName:
+          type: string
+          example: Cotton T-shirt
+        price:
+          type: integer
+          example: 250000
+        description:
+          type: string
+          example: A comfortable and stylish cotton T-shirt
+        stock:
+          type: integer
+          example: 100
+        viewCount:
+          type: integer
+          example: 500
+        soldCount:
+          type: integer
+          example: 200
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        categoryId:
+          type: integer
+          example: 1
+        promotionId:
+          type: integer
+          example: 1
+    SizeModel:
+      title: Size
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        sizeName:
+          type: string
+          example: sm
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        productId:
+          type: integer
+          example: 1
+    ColorModel:
+      title: Color
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        colorName:
+          type: string
+          example: sm
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        productId:
+          type: integer
+          example: 1
+    CartModel:
+      title: Cart
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        quantity:
+          type: integer
+          example: 1
+        note:
+          type: string
+          example: Please handle with care. Thank you!
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        productId:
+          type: integer
+          example: 1
+        sizeId:
+          type: integer
+          example: 1
+        colorId:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        paymentId:
+          type: integer
+          example: 1
+    PaymentModel:
+      title: Payment
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        amount:
+          type: integer
+          example: 1000000
+        paymentStatus:
+          type: string
+          example: Paid
+        deliveryStatus:
+          type: string
+          example: Not Shipped
+        trackingNumber:
+          type: string
+          example: "1234567890"
+        methodPayment:
+          type: string
+          example: Credit Card
+        paymentCode:
+          type: string
+          example: 12AcddSDS3443CScd
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        userId:
+          type: integer
+          example: 1
+    ReviewModel:
+      title: Review
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userRating:
+          type: integer
+          example: 5
+        userComment:
+          type: string
+          example: Great product! Fast shipping
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        userId:
+          type: integer
+          example: 1
+        productId:
+          type: integer
+          example: 1
+    DiscussionModel:
+      title: Discussion
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userMessage:
+          type: string
+          example: Is this clothing available in size XL?
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        userId:
+          type: integer
+          example: 1
+        productId:
+          type: integer
+          example: 1
+    ReplyModel:
+      title: Reply
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        replyMessage:
+          type: string
+          example: Yes, this clothing is available in size XL
+        createdAt:
+          type: string
+          example: 15 Februari 2024
+        updatedAt:
+          type: string
+          example: 15 Februari 2024
+        userId:
+          type: integer
+          example: 1
+        discussionId:
+          type: integer
+          example: 1
+  requestBodies:
+    Register:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fullName:
+                type: string
+                example: Budi Cahyono
+              email:
+                type: string
+                example: budi@mail.com
+              phoneNumber:
+                type: string
+                example: "08123456789"
+              password:
+                type: string
+                example: Budi123*
+    Login:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              emailOrPhoneNumber:
+                type: string
+                example: budi@mail.com
+              password:
+                type: string
+                example: Budi123*
+    VerifyOtp:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: budi@mail.com
+              otp:
+                type: string
+                example: "012345"
+    ResendOtp:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: budi@mail.com
+    ForgetPassword:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: budi@mail.com
+    UpdatePassword:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+                example: Budi123*
+              passwordConfirmation:
+                type: string
+                example: Budi123*
+    ChangePassword:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              oldPassword:
+                type: string
+                example: Budi123*
+              newPassword:
+                type: string
+                example: Test123*
+              newPasswordConfirmation:
+                type: string
+                example: Test123*
+    UpdateProfile:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+              fullName:
+                type: string
+                example: Budi Cahyono
+              address:
+                type: string
+                example: 123 Main Street, Apt 2B, New York, NY 10001
+              phoneNumber:
+                type: string
+                example: "08123456789"
+              city:
+                type: string
+                example: Vancouver
+              country:
+                type: string
+                example: Canada
+    CreateNotification:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Notification
+              message:
+                type: string
+                example: Password successfully updated!
+    CreateCategory:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+              categoryName:
+                type: string
+                example: Shirt
+    EditCategory:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+              categoryName:
+                type: string
+                example: Shirt
+    CreatePromotion:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              discount:
+                type: number
+                format: float
+                example: 0.1
+              startDate:
+                type: string
+                example: "2024-02-01"
+              endDate:
+                type: string
+                example: "2024-02-01"
+    EditPromotion:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              discount:
+                type: number
+                format: float
+                example: 0.1
+              startDate:
+                type: string
+                example: "2024-02-01"
+              endDate:
+                type: string
+                example: "2024-02-01"
+    CreateProduct:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+              productName:
+                type: string
+                example: Cotton T-shirt
+              price:
+                type: integer
+                example: 250000
+              description:
+                type: string
+                example: A comfortable and stylish cotton T-shirt
+              stock:
+                type: integer
+                example: 100
+              categoryId:
+                type: integer
+                example: 1
+              promotionId:
+                type: integer
+                example: 1
+    EditProduct:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                format: binary
+              productName:
+                type: string
+                example: Cotton T-shirt
+              price:
+                type: integer
+                example: 250000
+              description:
+                type: string
+                example: A comfortable and stylish cotton T-shirt
+              stock:
+                type: integer
+                example: 100
+              categoryId:
+                type: integer
+                example: 1
+              promotionId:
+                type: integer
+                example: 1
+    CreateSize:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              sizeName:
+                type: string
+                example: sm
+              productId:
+                type: integer
+                example: 1
+    EditSize:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              sizeName:
+                type: string
+                example: sm
+              productId:
+                type: integer
+                example: 1
+    CreateColor:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              colorName:
+                type: string
+                example: black
+              productId:
+                type: integer
+                example: 1
+    EditColor:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              colorName:
+                type: string
+                example: black
+              productId:
+                type: integer
+                example: 1
+    CreateCart:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              note:
+                type: string
+                example: Please handle with care. Thank you!
+              sizeId:
+                type: integer
+                example: 1
+              colorId:
+                type: integer
+                example: 1
+    EditCart:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              quantity:
+                type: integer
+                example: 1
+              note:
+                type: string
+                example: Please handle with care. Thank you!
+    CreatePayment:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              methodPayment:
+                type: string
+                example: Credit Card
+              cardNumber:
+                type: string
+                example: 4811 1111 1111 1114
+              cvv:
+                type: string
+                example: "123"
+              expiryDate:
+                type: string
+                example: 01/25
+    EditPayment:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              trackingNumber:
+                type: string
+                example: "0123456789"
+    CreateReview:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userRating:
+                type: integer
+                example: 5
+              userComment:
+                type: string
+                example: Great product! Fast shipping
+    CreateDiscussion:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              userMessage:
+                type: string
+                example: Is this clothing available in size XL?
+    CreateReply:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              replyMessage:
+                type: string
+                example: Yes, this clothing is available in size XL
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    google_oauth:
+      type: oauth2
+      description: Google OAuth
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+          tokenUrl: https://www.googleapis.com/oauth2/v4/token
+          scopes:
+            profile: View your basic profile info
+            email: View your email address

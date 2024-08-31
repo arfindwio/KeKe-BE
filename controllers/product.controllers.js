@@ -316,19 +316,8 @@ module.exports = {
 
   getProductsRecommendation: catchAsync(async (req, res, next) => {
     try {
-      let { search } = req.query;
-
-      search = search ? search.trim() : "";
-
-      let products;
-
-      products = await prisma.product.findMany({
-        where: search
-          ? {
-              productName: { contains: search, mode: "insensitive" },
-              isDeleted: false,
-            }
-          : { isDeleted: false },
+      let products = await prisma.product.findMany({
+        where: { isDeleted: false },
         orderBy: [{ soldCount: "desc" }, { viewCount: "desc" }],
         include: {
           image: {

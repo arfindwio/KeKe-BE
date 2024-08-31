@@ -467,4 +467,36 @@ module.exports = {
       next(err);
     }
   }),
+
+  getStatusMidtrans: catchAsync(async (req, res, next) => {
+    try {
+      const { orderId } = req.params;
+
+      // Cari data pembayaran dari database
+      const payment = await prisma.payment.findFirst({
+        where: { paymentCode: orderId },
+      });
+
+      // Jika data pembayaran tidak ditemukan
+      if (!payment) throw new CustomError(404, "Payment not found");
+
+      // Ambil status pembayaran dari Midtrans
+      const response = await axios.get(`https://api.sandbox.midtrans.com/v2/${orderId}/status`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Basic U0ItTWlkLXNlcnZlci1CbGlWSjQ3cWJJaUlVOGI2RjZfSVNCUG46MDIxMzY1ODRBcmZpbg==",
+        },
+      });
+
+      // Kirimkan hanya data dari respons
+      res.status(200).json({
+        status: true,
+        message: "Payment status retrieved successfully",
+        data: response.data, // Hanya ambil response.data
+      });
+    } catch (err) {
+      // Tangani kesalahan dengan middleware error
+      next(err);
+    }
+  }),
 };
