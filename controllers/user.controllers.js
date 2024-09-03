@@ -7,6 +7,7 @@ const { CustomError } = require("../utils/errorHandler");
 const { generatedOTP } = require("../utils/otpGenerator");
 const nodemailer = require("../utils/nodemailer");
 const { formattedDate } = require("../utils/formattedDate");
+const { getPagination } = require("../utils/getPagination");
 
 const { JWT_SECRET_KEY, FRONTEND_URL } = process.env;
 
@@ -440,7 +441,14 @@ module.exports = {
 
   getAllUsers: catchAsync(async (req, res, next) => {
     try {
+      const { page = 1, limit = 10 } = req.query;
+
       const users = await prisma.user.findMany({
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+        orderBy: {
+          id: "desc",
+        },
         include: {
           userProfile: {
             select: {
@@ -452,10 +460,14 @@ module.exports = {
         },
       });
 
+      const totalUsers = await prisma.user.count();
+
+      const pagination = getPagination(req, totalUsers, Number(page), Number(limit));
+
       return res.status(200).json({
         status: true,
         message: "Get All Users successful",
-        data: { users },
+        data: { pagination, users },
       });
     } catch (err) {
       next(err);
