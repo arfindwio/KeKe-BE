@@ -4,7 +4,7 @@ const prisma = require("../libs/prismaClient");
 
 module.exports = {
   promotionCheck: () => {
-    cron.schedule("0 0 * * *", async function () {
+    cron.schedule("0 */6 * * *", async function () {
       const products = await prisma.product.findMany();
       const promotions = await prisma.promotion.findMany();
       const validPromotionIds = products.map((data) => data.promotionId).filter((promotionId) => promotionId !== null);
