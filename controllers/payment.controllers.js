@@ -184,11 +184,11 @@ module.exports = {
             });
 
             let paymentStatus;
-            if (response.transaction_status === "capture" || response.transaction_status === "settlement") {
-              paymentStatus = response.fraud_status === "accept" ? "Paid" : "Failed";
-            } else if (response.transaction_status === "cancel" || response.transaction_status === "deny") {
+            if (response.data.transaction_status === "capture" || response.data.transaction_status === "settlement") {
+              paymentStatus = response.data.fraud_status === "accept" ? "Paid" : "Failed";
+            } else if (response.data.transaction_status === "cancel" || response.data.transaction_status === "deny") {
               paymentStatus = "Failed";
-            } else if (response.transaction_status === "expire") {
+            } else if (response.data.transaction_status === "expire") {
               paymentStatus = "Expired";
             } else {
               paymentStatus = "Failed";
