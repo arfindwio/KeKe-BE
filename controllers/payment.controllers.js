@@ -173,6 +173,37 @@ module.exports = {
 
       const pagination = getPagination(req, totalPayments, Number(page), Number(limit));
 
+      await Promise.all(
+        payments.map(async (payment) => {
+          if (payment.paymentStatus === "Failed") {
+            const response = await axios.get(`https://api.sandbox.midtrans.com/v2/${payment.paymentCode}/status`, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Basic U0ItTWlkLXNlcnZlci1CbGlWSjQ3cWJJaUlVOGI2RjZfSVNCUG46MDIxMzY1ODRBcmZpbg==",
+              },
+            });
+
+            let paymentStatus;
+            if (response.transaction_status === "capture" || response.transaction_status === "settlement") {
+              paymentStatus = response.fraud_status === "accept" ? "Paid" : "Failed";
+            } else if (response.transaction_status === "cancel" || response.transaction_status === "deny") {
+              paymentStatus = "Failed";
+            } else if (response.transaction_status === "expire") {
+              paymentStatus = "Expired";
+            } else {
+              paymentStatus = "Failed";
+            }
+
+            await prisma.payment.update({
+              where: { id: Number(payment.id) },
+              data: {
+                paymentStatus,
+              },
+            });
+          }
+        })
+      );
+
       res.status(200).json({
         status: true,
         message: "Get all payment history successful",
@@ -296,7 +327,7 @@ module.exports = {
 
       if (methodPayment === "Counter") {
         if (bankName !== undefined || cardNumber !== undefined || cvv !== undefined || expiryDate !== undefined || !store) {
-          throw new CustomError(400, "Please provide only the required card details (cardNumber, cvv, expiryDate) for this payment method. Other fields are not applicable.");
+          throw new CustomError(400, "store must be provided.");
         }
 
         parameter.payment_type = "cstore";
