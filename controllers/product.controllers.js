@@ -24,7 +24,7 @@ module.exports = {
           productsQuery.orderBy.unshift({ id: "asc" });
         }
         if (f.includes("popular")) {
-          productsQuery.orderBy.push({ soldCount: "desc" }, { review: { _count: "desc" } });
+          productsQuery.orderBy.unshift({ soldCount: "desc" }, { review: { _count: "desc" } });
         }
         if (f.includes("promo")) {
           productsQuery.where.promotionId = { not: null };
