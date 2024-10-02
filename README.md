@@ -63,7 +63,7 @@ Access the Swagger documentation at `/api-docs` after starting the server.
 
 ## API Endpoints
 
-- Users: `/api/v1/users``
+- Users: `/api/v1/users`
 - User Profiles: `/api/v1/user-profiles`
 - notifications: `/api/v1/notifications`
 - Categories: `/api/v1/categories`
